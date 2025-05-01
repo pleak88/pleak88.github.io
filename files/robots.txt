@@ -1,0 +1,4 @@
+User-agent: Googlebot
+User-agent: AdsBot-Googlebot
+Allow: /
+Sitemap: https://%%DOMAIN%%/sitemap.xml
