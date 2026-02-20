@@ -1,0 +1,378 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iBarber.pro | Premium Personal Barber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/x-icon" href="/favicon.svg">
+</head>
+
+<body>
+  <div class="background-layer">
+    <span class="blob blob-1 parallax" data-speed="0.12"></span>
+    <span class="blob blob-2 parallax" data-speed="0.2"></span>
+    <span class="blob blob-3 parallax" data-speed="0.16"></span>
+  </div>
+
+  <svg class="liquid-glass-filters" aria-hidden="true" focusable="false" width="0" height="0">
+    <defs>
+      <filter id="iosLiquidGlass" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.009 0.02" numOctaves="2" seed="7" result="noise">
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="7" xChannelSelector="R" yChannelSelector="G"
+          result="distorted"></feDisplacementMap>
+        <feGaussianBlur in="distorted" stdDeviation="0.35" result="smoothed"></feGaussianBlur>
+        <feComponentTransfer in="smoothed" result="glass">
+          <feFuncA type="table" tableValues="0 0.95"></feFuncA>
+        </feComponentTransfer>
+      </filter>
+      <filter id="iosLiquidGlassFlow" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.018 0.01" numOctaves="2" seed="11" result="noise">
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G"
+          result="distorted"></feDisplacementMap>
+        <feGaussianBlur in="distorted" stdDeviation="0.45" result="smoothed"></feGaussianBlur>
+        <feComponentTransfer in="smoothed" result="glass">
+          <feFuncA type="table" tableValues="0 0.95"></feFuncA>
+        </feComponentTransfer>
+      </filter>
+    </defs>
+  </svg>
+
+  <header class="topbar">
+    <a class="brand" href="/">iBARBER.<small style="opacity: .8;">PRO</small></a>
+    <div class="lang-switch" aria-label="Language switcher">
+      <button class="lang-btn btn active" data-lang="en" type="button">EN</button>
+      <button class="lang-btn btn" data-lang="ru" type="button">RU</button>
+      <button class="lang-btn btn" data-lang="pl" type="button">PL</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="hero" class="section hero reveal">
+      <div class="hero-card glass tilt-card">
+        <div class="hero-content">
+          <h1 data-i18n="hero_title">Barber Katia</h1>
+          <p class="hero-text" data-i18n="hero_desc">
+            Personal barber experience for modern men who value quality, aesthetics, and detail.
+          </p>
+          <a class="book-btn btn" target="_blank" rel="noopener noreferrer"
+            href="https://booksy.com/pl-pl/67599_brand-barbershop-al-jerozolimskie-55_barber-shop_3_warszawa/staffer/387868#ba_s=bd_1">
+            <span data-i18n="book_btn">Book Now</span>
+          </a>
+        </div>
+        <div class="cta-stack hero-cta-col">
+          <a class="cta-btn btn" target="_blank" rel="noopener noreferrer"
+            href="https://www.google.com/maps/place/BRAND+Barber+Shop/@52.228659,21.0025957,17z/data=!3m1!4b1!4m6!3m5!1s0x471ecd1f20bffa65:0xfe442640d25b182a!8m2!3d52.2286591!4d21.0074612!16s%2Fg%2F11j8rp0tqm?entry=ttu">
+            <span class="cta-left">
+              <svg class="cta-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 21s-6-5.2-6-10a6 6 0 1112 0c0 4.8-6 10-6 10z"></path>
+                <circle cx="12" cy="11" r="2.5"></circle>
+              </svg>
+              <span class="cta-label" data-i18n="btn_address">Address</span>
+            </span>
+            <span class="cta-pill">
+              <span data-i18n="action_navigate">Navigate</span>
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M4 10h12"></path>
+                <path d="M11 5l5 5-5 5"></path>
+              </svg>
+            </span>
+          </a>
+          <a class="cta-btn btn" href="tel:+48694697979">
+            <span class="cta-left">
+              <svg class="cta-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M7.5 4.5h3l1.2 3.3-1.8 1.7a14 14 0 006.1 6.1l1.7-1.8 3.3 1.2v3c0 .8-.7 1.5-1.5 1.5A16.5 16.5 0 014.5 6c0-.8.7-1.5 1.5-1.5z">
+                </path>
+              </svg>
+              <span class="cta-label" data-i18n="btn_phone">Phone</span>
+            </span>
+            <span class="cta-pill">
+              <span data-i18n="action_call">Call</span>
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M4 10h12"></path>
+                <path d="M11 5l5 5-5 5"></path>
+              </svg>
+            </span>
+          </a>
+
+          <div class="support-dropdown">
+            <button class="cta-btn support-toggle btn" type="button" id="supportToggle" aria-expanded="false"
+              aria-controls="supportMenu">
+              <span class="cta-left">
+                <svg class="cta-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M12 21l-2.2-2c-3.7-3.2-6.3-5.5-6.3-8.6a4.4 4.4 0 018-2.5 4.4 4.4 0 018 2.5c0 3.1-2.6 5.4-6.3 8.6L12 21z">
+                  </path>
+                </svg>
+                <span class="cta-label" data-i18n="support_btn">Donate</span>
+              </span>
+              <span class="cta-pill">
+                <span data-i18n="support_action">Choose</span>
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M5 7l5 6 5-6"></path>
+                </svg>
+              </span>
+            </button>
+            <div class="support-menu glass" id="supportMenu" hidden>
+              <a class="support-item btn blik" href="#" role="button" data-wallet="+48694697979" aria-label="BLIK" title="BLIK"></a>
+              <a class="support-item btn usdt" href="#" role="button" data-wallet="TH92DopysBGg1DUN6yAoqQUB9Yo9kfHeJA" aria-label="USDT TRC20" title="USDT TRC20"></a>
+              <a class="support-item btn revolut" href="#" role="button" data-wallet="@pleak" aria-label="Revolut" title="Revolut"></a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="book-support" class="section reveal" data-delay="0.08">
+      <div class="book-support-grid">
+        <div class="hero-reviews-rotator glass tilt-card" id="reviewsRotator" aria-live="polite">
+          <p class="hero-reviews-rotator__title" data-i18n="reviews_title">Отзывы клиентов</p>
+          <div class="reviews-section__cards">
+            <div class="reviews-section__card">
+              <div class="reviews-section__card-boby">
+                <div class="reviews-section__card-head">
+                  <span class="reviews-section__source">Google</span>
+                  <h3>Фёдор Fill</h3>
+                </div>
+                <div class="reviews-section__rating" aria-label="5 stars">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
+              </div>
+              <p class="reviews-section__card-text">
+                Екатерина огромное спасибо! Лучший барбер Варшавы!))
+              </p>
+            </div>
+            <div class="reviews-section__card">
+              <div class="reviews-section__card-boby">
+                <div class="reviews-section__card-head">
+                  <span class="reviews-section__source">Google</span>
+                  <h3>Bartek Czajkowski</h3>
+                </div>
+                <div class="reviews-section__rating" aria-label="5 stars">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
+              </div>
+              <p class="reviews-section__card-text">
+                Polecam to&nbsp;miejsce- Pani Katia jest profesjonalistką w&nbsp;swoim fachu, po&nbsp;latach poszukiwań
+                znalazłem stały punkt obsługi mojej brody.
+              </p>
+            </div>
+            <div class="reviews-section__card">
+              <div class="reviews-section__card-boby">
+                <div class="reviews-section__card-head">
+                  <span class="reviews-section__source">Google</span>
+                  <h3>Slava Mazai</h3>
+                </div>
+                <div class="reviews-section__rating" aria-label="5 stars">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
+              </div>
+              <p class="reviews-section__card-text">
+                Świetne miejsce i&nbsp;jeszcze lepsza barberka! Katia to&nbsp;prawdziwa profesjonalistka&nbsp;— zawsze
+                dokładna, uważna na&nbsp;detale i wie,
+                jak dobrać fryzurę do&nbsp;kształtu twarzy. Strzyżenie u&nbsp;niej to&nbsp;czysta przyjemność,
+                a&nbsp;efekt końcowy zawsze przewyższa oczekiwania.
+                Do&nbsp;tego super atmosfera i&nbsp;miła rozmowa. Zdecydowanie polecam i&nbsp;na&nbsp;pewno wrócę!
+              </p>
+            </div>
+            <div class="reviews-section__card">
+              <div class="reviews-section__card-boby">
+                <div class="reviews-section__card-head">
+                  <span class="reviews-section__source">Google</span>
+                  <h3>Guy Fox</h3>
+                </div>
+                <div class="reviews-section__rating" aria-label="5 stars">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
+              </div>
+              <p class="reviews-section__card-text">
+                Bardzo dobry barber Katya Plaksunova. Dziękuję za&nbsp;dobrą fryzurę
+              </p>
+            </div>
+            <div class="reviews-section__card">
+              <div class="reviews-section__card-boby">
+                <div class="reviews-section__card-head">
+                  <span class="reviews-section__source">Booksy</span>
+                  <h3>Mateusz S</h3>
+                </div>
+                <div class="reviews-section__rating" aria-label="5 stars">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
+              </div>
+              <p class="reviews-section__card-text">
+                Profesjonalna obługa. Katia jest dokładna i&nbsp;dbająca o&nbsp;szczegóły. Polecam z&nbsp;czystym
+                sumieniem!
+              </p>
+            </div>
+            <div class="reviews-section__card">
+              <div class="reviews-section__card-boby">
+                <div class="reviews-section__card-head">
+                  <span class="reviews-section__source">Google</span>
+                  <h3>Anton Budavei</h3>
+                </div>
+                <div class="reviews-section__rating" aria-label="5 stars">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
+              </div>
+              <p class="reviews-section__card-text">
+                Рекомендую мастера Екатерину из&nbsp;Беларуси👍 Знает своё дело, результат всегда на&nbsp;высоком
+                уровне!
+              </p>
+            </div>
+            <div class="reviews-section__card">
+              <div class="reviews-section__card-boby">
+                <div class="reviews-section__card-head">
+                  <span class="reviews-section__source">Google</span>
+                  <h3>Віталій Рак</h3>
+                </div>
+                <div class="reviews-section__rating" aria-label="5 stars">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
+              </div>
+              <p class="reviews-section__card-text">
+                Стильно і красиво. Локалізація&nbsp;топ! Катя майстер своєї справи. Найкраща. Дякую. Рекомендую!
+              </p>
+            </div>
+            <div class="reviews-section__card">
+              <div class="reviews-section__card-boby">
+                <div class="reviews-section__card-head">
+                  <span class="reviews-section__source">Google</span>
+                  <h3>Uladzislau Shpileuski</h3>
+                </div>
+                <div class="reviews-section__rating" aria-label="5 stars">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
+              </div>
+              <p class="reviews-section__card-text">
+                Советую, барбер Катя очень классной подходит к&nbsp;работе и&nbsp;суперски стрижет
+              </p>
+            </div>
+            <div class="reviews-section__card">
+              <div class="reviews-section__card-boby">
+                <div class="reviews-section__card-head">
+                  <span class="reviews-section__source">Google</span>
+                  <h3>Dima Borochiner</h3>
+                </div>
+                <div class="reviews-section__rating" aria-label="5 stars">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
+              </div>
+              <p class="reviews-section__card-text">
+                Барбер Екатерина настоящий профи) супергерой моей стрижки и&nbsp;бороды!
+              </p>
+            </div>
+            <div class="reviews-section__card">
+              <div class="reviews-section__card-boby">
+                <div class="reviews-section__card-head">
+                  <span class="reviews-section__source">Google</span>
+                  <h3>Artsiom Padhorny</h3>
+                </div>
+                <div class="reviews-section__rating" aria-label="5 stars">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
+              </div>
+              <p class="reviews-section__card-text">
+                Катя&nbsp;—лучший Барбер в&nbsp;Варшаве. Создаёт приятную атмосферу и&nbsp;делает чудеса
+                с&nbsp;волосами. Рекомендую
+              </p>
+            </div>
+          </div>
+          <div class="reviews-buttons">
+            <button class="reviews-btn btn" type="button" aria-label="Previous review">
+              <svg width="16" height="8" viewBox="0 0 16 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1.5L8 6.5L15 1.5" stroke="currentColor" stroke-width="2" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="book-wrap glass tilt-card">
+          <h2 data-i18n="book_title">Book an Appointment</h2>
+          <p data-i18n="book_desc">Book your appointment on Booksy right now!</p>
+          <a class="book-btn btn" target="_blank" rel="noopener noreferrer"
+            href="https://booksy.com/pl-pl/67599_brand-barbershop-al-jerozolimskie-55_barber-shop_3_warszawa/staffer/387868#ba_s=bd_1">
+            <span data-i18n="book_btn">Book Now</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>ibarber.pro</p>
+    <div class="footer-links">
+      <a class="cta-btn btn" target="_blank" rel="noopener noreferrer" href="https://t.me/KatiaBarber">
+        <span class="cta-left">
+          <svg class="cta-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 4L3 11.2l5.4 2L18 7l-7.2 7.4.1 5.6 3.2-3.1 4.6 3.1L21 4z"></path>
+          </svg>
+          <span class="cta-label" data-i18n="btn_telegram">Telegram</span>
+        </span>
+      </a>
+      <a class="cta-btn btn" target="_blank" rel="noopener noreferrer" href="https://instagram.com/ibarberpro">
+        <span class="cta-left">
+          <svg class="cta-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="4" width="16" height="16" rx="5"></rect>
+            <circle cx="12" cy="12" r="3.3"></circle>
+            <circle cx="16.8" cy="7.5" r="1"></circle>
+          </svg>
+          <span class="cta-label" data-i18n="btn_instagram">Instagram</span>
+        </span>
+      </a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
