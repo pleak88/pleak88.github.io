@@ -244,6 +244,12 @@ h2 {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+  color: #e9eaf0;
+  background: linear-gradient(180deg, #ffffff 0%, #e6e8ef 32%, #aab0c0 54%, #f3f4f8 66%, #9398a8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.45));
 }
 
 h1 {
