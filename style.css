@@ -12,6 +12,7 @@
   --radius-lg: 24px;
   --radius-md: 20px;
   --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  --font-display: "Space Grotesk", "Manrope", sans-serif;
   --reviews-slider-duration: 1100ms;
   --reviews-slider-ease: cubic-bezier(0.34, .2, 0, 1);
   --reviews-mask-edge: 8px;
@@ -59,7 +60,13 @@ button,
   -webkit-user-select: none;
   user-select: none;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: transform 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium),
+    background 0.2s var(--ease-premium), border-color 0.2s var(--ease-premium), color 0.2s var(--ease-premium);
+}
+
+:focus-visible {
+  outline: 2px solid rgba(155, 92, 255, 0.9);
+  outline-offset: 3px;
 }
 
 .background-layer {
@@ -201,7 +208,7 @@ main {
 }
 
 .hero {
-  padding-top: 34px;
+  padding-top: 48px;
 }
 
 .hero-card {
@@ -231,9 +238,18 @@ p {
   margin: 0;
 }
 
+h1,
+h2,
+h3,
+.brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
 h1 {
-  font-size: clamp(1.9rem, 7.4vw, 3.3rem);
-  line-height: 1.08;
+  font-size: clamp(2.1rem, 7.6vw, 4rem);
+  line-height: 1.03;
+  letter-spacing: -0.025em;
 }
 
 .hero-text {
@@ -391,7 +407,8 @@ h1 {
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(18px) saturate(150%);
   -webkit-backdrop-filter: blur(18px) saturate(150%);
-  transition: border-color 520ms var(--ease-premium), background 520ms var(--ease-premium);
+  transition: border-color 520ms var(--ease-premium), background 520ms var(--ease-premium),
+    transform 320ms var(--ease-premium), box-shadow 320ms var(--ease-premium);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -850,6 +867,8 @@ h2 {
     background:
       linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.09) 42%, rgba(145, 170, 255, 0.18)),
       linear-gradient(125deg, rgba(24, 32, 58, 0.86), rgba(38, 24, 58, 0.82));
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(95, 125, 255, 0.22);
   }
 
   .book-btn:hover,
