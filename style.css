@@ -12,7 +12,7 @@
   --radius-lg: 24px;
   --radius-md: 20px;
   --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
-  --font-display: "Story Script", "Manrope", cursive;
+  --font-display: "Oswald", "Manrope", sans-serif;
   --reviews-slider-duration: 1100ms;
   --reviews-slider-ease: cubic-bezier(0.34, .2, 0, 1);
   --reviews-mask-edge: 8px;
@@ -241,13 +241,14 @@ p {
 h1,
 h2 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 h1 {
   font-size: clamp(2.3rem, 8vw, 4.4rem);
-  line-height: 1.12;
-  letter-spacing: 0;
+  line-height: 1.05;
 }
 
 .hero-text {
@@ -507,8 +508,7 @@ h1 {
 
 h2 {
   font-size: clamp(1.7rem, 6.4vw, 3rem);
-  line-height: 1.15;
-  letter-spacing: 0;
+  line-height: 1.08;
 }
 
 .section-head p {
