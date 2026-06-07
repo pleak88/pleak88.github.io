@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="i-pin" viewBox="0 0 24 24">
+    <path d="M12 21s-6-5.2-6-10a6 6 0 1112 0c0 4.8-6 10-6 10z"></path>
+    <circle cx="12" cy="11" r="2.5"></circle>
+  </symbol>
+  <symbol id="i-arrow" viewBox="0 0 20 20">
+    <path d="M4 10h12"></path>
+    <path d="M11 5l5 5-5 5"></path>
+  </symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24">
+    <path d="M7.5 4.5h3l1.2 3.3-1.8 1.7a14 14 0 006.1 6.1l1.7-1.8 3.3 1.2v3c0 .8-.7 1.5-1.5 1.5A16.5 16.5 0 014.5 6c0-.8.7-1.5 1.5-1.5z"></path>
+  </symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24">
+    <path d="M12 21l-2.2-2c-3.7-3.2-6.3-5.5-6.3-8.6a4.4 4.4 0 018-2.5 4.4 4.4 0 018 2.5c0 3.1-2.6 5.4-6.3 8.6L12 21z"></path>
+  </symbol>
+  <symbol id="i-chevron" viewBox="0 0 20 20">
+    <path d="M5 7l5 6 5-6"></path>
+  </symbol>
+  <symbol id="i-prev" viewBox="0 0 16 8">
+    <path d="M1 1.5L8 6.5L15 1.5" stroke="currentColor" stroke-width="2" fill="none"></path>
+  </symbol>
+  <symbol id="i-telegram" viewBox="0 0 24 24">
+    <path d="M21 4L3 11.2l5.4 2L18 7l-7.2 7.4.1 5.6 3.2-3.1 4.6 3.1L21 4z"></path>
+  </symbol>
+  <symbol id="i-instagram" viewBox="0 0 24 24">
+    <rect x="4" y="4" width="16" height="16" rx="5"></rect>
+    <circle cx="12" cy="12" r="3.3"></circle>
+    <circle cx="16.8" cy="7.5" r="1"></circle>
+  </symbol>
+</svg>
