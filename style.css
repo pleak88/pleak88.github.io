@@ -70,6 +70,36 @@ button,
   overflow: hidden;
 }
 
+.site-video-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--bg-dark) url('/assets/img/hero/poster.avif') center/cover no-repeat;
+}
+
+.site-video-bg__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.site-video-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(270deg, rgba(0, 0, 0, .6) 0%, rgba(0, 0, 0, .92) 50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-video-bg__media {
+    display: none;
+  }
+}
+
 .liquid-glass-filters {
   position: absolute;
 }
