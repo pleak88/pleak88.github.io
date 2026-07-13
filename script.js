@@ -257,31 +257,49 @@ function setupRevealAnimations() {
 function setupParallax() {
   if (prefersReducedMotion) return;
 
-  const nodes = document.querySelectorAll(".parallax");
   const heroSection = document.querySelector(".hero-intro");
   const heroCopy = document.querySelector(".hero-copy");
   const heroPhoto = document.querySelector(".hero-photo");
   const revSection = document.querySelector(".reviews-panel");
   const revLeft = document.querySelector(".reviews-side");
   const revRight = document.querySelector(".reviews-media");
-  if (!nodes.length && !heroSection && !revSection) return;
+  if (!heroSection && !revSection) return;
 
-  const update = () => {
-    const y = window.scrollY;
-    nodes.forEach((node) => {
-      const speed = Number(node.dataset.speed || "0.1");
-      node.style.transform = `translate3d(0, ${(y * speed).toFixed(2)}px, 0)`;
-    });
+  // инерционное сглаживание скролла — GSAP-scrub плавность
+  let smoothY = window.scrollY;
+  let rafId = null;
 
-    // секция отзывов: съезжается при долистывании, разъезжается при скролле вверх
+  const clamp01 = (v) => Math.min(1, Math.max(0, v));
+
+  const apply = () => {
+    const desktop = window.innerWidth > 820;
+
+    if (heroSection && heroCopy && heroPhoto) {
+      if (desktop) {
+        const limit = Math.max(heroSection.offsetHeight * 0.85, 1);
+        const p = clamp01(smoothY / limit);
+        const shift = (p * 170).toFixed(2);
+        const fade = (1 - p * 0.75).toFixed(3);
+        heroCopy.style.transform = `translate3d(-${shift}px, 0, 0)`;
+        heroCopy.style.opacity = fade;
+        heroPhoto.style.transform = `translate3d(${shift}px, ${(smoothY * -0.08).toFixed(2)}px, 0)`;
+        heroPhoto.style.opacity = fade;
+      } else {
+        heroCopy.style.transform = "";
+        heroCopy.style.opacity = "";
+        heroPhoto.style.transform = `translate3d(0, ${(smoothY * -0.08).toFixed(2)}px, 0)`;
+        heroPhoto.style.opacity = "";
+      }
+    }
+
     if (revSection && revLeft && revRight) {
-      if (window.innerWidth > 820) {
-        const rect = revSection.getBoundingClientRect();
+      if (desktop) {
         const vh = window.innerHeight;
-        const start = vh * 0.95;
-        const end = vh * 0.45;
-        const p = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
-        const shift = ((1 - p) * 150).toFixed(1);
+        const top = revSection.offsetTop - smoothY;
+        const startEdge = vh * 0.95;
+        const endEdge = vh * 0.45;
+        const p = clamp01((startEdge - top) / (startEdge - endEdge));
+        const shift = ((1 - p) * 150).toFixed(2);
         const fade = (0.2 + 0.8 * p).toFixed(3);
         revLeft.style.transform = `translate3d(-${shift}px, 0, 0)`;
         revLeft.style.opacity = fade;
@@ -294,42 +312,29 @@ function setupParallax() {
         revRight.style.opacity = "";
       }
     }
-
-    // хиро разъезжается в стороны при скролле вниз и возвращается назад
-    if (heroSection && heroCopy && heroPhoto) {
-      if (window.innerWidth > 820) {
-        const limit = Math.max(heroSection.offsetHeight * 0.85, 1);
-        const p = Math.min(1, Math.max(0, y / limit));
-        const shift = (p * 170).toFixed(1);
-        const fade = (1 - p * 0.75).toFixed(3);
-        heroCopy.style.transform = `translate3d(-${shift}px, 0, 0)`;
-        heroCopy.style.opacity = fade;
-        heroPhoto.style.transform = `translate3d(${shift}px, ${(y * -0.08).toFixed(1)}px, 0)`;
-        heroPhoto.style.opacity = fade;
-      } else {
-        heroCopy.style.transform = "";
-        heroCopy.style.opacity = "";
-        heroPhoto.style.transform = `translate3d(0, ${(y * -0.08).toFixed(1)}px, 0)`;
-        heroPhoto.style.opacity = "";
-      }
-    }
   };
 
-  let ticking = false;
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        update();
-        ticking = false;
-      });
-    },
-    { passive: true }
-  );
+  const tick = () => {
+    const target = window.scrollY;
+    smoothY += (target - smoothY) * 0.12;
+    if (Math.abs(target - smoothY) < 0.4) {
+      smoothY = target;
+      apply();
+      rafId = null;
+      return;
+    }
+    apply();
+    rafId = requestAnimationFrame(tick);
+  };
 
-  update();
+  const kick = () => {
+    if (rafId === null) rafId = requestAnimationFrame(tick);
+  };
+
+  window.addEventListener("scroll", kick, { passive: true });
+  window.addEventListener("resize", kick, { passive: true });
+
+  apply();
 }
 
 function setupReviewsCarousel() {

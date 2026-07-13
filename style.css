@@ -252,8 +252,12 @@ html.js .reveal.is-visible {
   align-items: center;
 }
 
+.hero-copy {
+  will-change: transform, opacity;
+}
+
 .hero-copy > * {
-  animation: rise-left 0.95s var(--ease-out) both;
+  animation: rise-left 1.15s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .hero-copy h1 {
@@ -483,7 +487,7 @@ html.js .reveal.is-visible {
   position: relative;
   width: fit-content;
   justify-self: center;
-  will-change: transform;
+  will-change: transform, opacity;
 }
 
 
@@ -498,7 +502,7 @@ html.js .reveal.is-visible {
   box-shadow: 0 0 0 clamp(6px, 1vw, 10px) rgba(255, 255, 255, 0.05),
     0 0 0 1px rgba(255, 255, 255, 0.06),
     0 40px 80px -40px rgba(0, 0, 0, 0.9);
-  animation: rise-right 1.05s var(--ease-out) 0.15s both;
+  animation: rise-right 1.25s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
 }
 
 .portrait-arch img {
@@ -617,6 +621,11 @@ html.js .reveal.is-visible {
   margin-bottom: clamp(24px, 3.5vw, 44px);
 }
 
+.reviews-side,
+.reviews-media {
+  will-change: transform, opacity;
+}
+
 .reviews-flex {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
@@ -646,6 +655,7 @@ html.js .reveal.is-visible {
   gap: 16px;
   opacity: 0;
   transform: translateX(-90px);
+  will-change: transform, opacity;
   /* уход: power2.in — ускоряется улетая */
   transition: opacity 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53), transform 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53);
   pointer-events: none;
