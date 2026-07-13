@@ -345,7 +345,7 @@ function setupReviewsCarousel() {
   if (slides.length < 2) return;
 
   const autoDelayMs = 5200;
-  const transitionMs = 560;
+  const transitionMs = 500;
   const canAnimate = !prefersReducedMotion;
 
   // случайный порядок при каждой загрузке (Fisher–Yates)
@@ -386,11 +386,10 @@ function setupReviewsCarousel() {
 
     current.classList.remove("is-current");
     if (canAnimate) {
-      current.classList.add("is-leaving");
-      current.style.transform = `translateX(${dir > 0 ? -108 : 108}%)`;
+      current.style.transform = `translateX(${dir > 0 ? -64 : 64}px)`;
 
       next.style.transition = "none";
-      next.style.transform = `translateX(${dir > 0 ? 108 : -108}%)`;
+      next.style.transform = `translateX(${dir > 0 ? 64 : -64}px)`;
       void next.offsetWidth;
       next.style.transition = "";
     }
@@ -399,7 +398,6 @@ function setupReviewsCarousel() {
 
     index = nextIndex;
     setTimeout(() => {
-      current.classList.remove("is-leaving");
       current.style.transform = "";
       busy = false;
     }, canAnimate ? transitionMs : 0);

@@ -633,10 +633,9 @@ html.js .reveal.is-visible {
   position: relative;
 }
 
-/* один слайд: чистый сдвиг без затухания — уходит влево, приходит справа */
+/* один слайд, GSAP-стиль: уход влево с затуханием, приход справа с осветлением */
 .reviews-stack {
   display: grid;
-  overflow: hidden;
 }
 
 .reviews-stack .reviews-section__card {
@@ -645,22 +644,16 @@ html.js .reveal.is-visible {
   flex-direction: column;
   align-items: flex-start;
   gap: 16px;
-  visibility: hidden;
-  transform: translateX(108%);
-  transition: transform 0.55s var(--ease-out), visibility 0s linear 0.55s;
+  opacity: 0;
+  transform: translateX(64px);
+  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
   pointer-events: none;
 }
 
 .reviews-stack .reviews-section__card.is-current {
-  visibility: visible;
+  opacity: 1;
   transform: none;
-  transition: transform 0.55s var(--ease-out);
   pointer-events: auto;
-}
-
-.reviews-stack .reviews-section__card.is-leaving {
-  visibility: visible;
-  transition: transform 0.55s var(--ease-out);
 }
 
 .reviews-src-row {
@@ -690,6 +683,11 @@ html.js .reveal.is-visible {
   line-height: 1.6;
   color: var(--ink);
   text-wrap: pretty;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
 }
 
 .reviews-section__card-boby {
