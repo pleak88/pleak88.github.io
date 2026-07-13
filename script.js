@@ -296,11 +296,11 @@ function setupParallax() {
       if (desktop) {
         const vh = window.innerHeight;
         const top = revSection.offsetTop - smoothY;
-        const startEdge = vh * 0.95;
-        const endEdge = vh * 0.45;
+        const startEdge = vh * 1.0;
+        const endEdge = vh * 0.35;
         const p = clamp01((startEdge - top) / (startEdge - endEdge));
-        const shift = ((1 - p) * 150).toFixed(2);
-        const fade = (0.2 + 0.8 * p).toFixed(3);
+        const shift = ((1 - p) * 170).toFixed(2);
+        const fade = (0.15 + 0.85 * p).toFixed(3);
         revLeft.style.transform = `translate3d(-${shift}px, 0, 0)`;
         revLeft.style.opacity = fade;
         revRight.style.transform = `translate3d(${shift}px, 0, 0)`;
