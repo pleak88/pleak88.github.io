@@ -385,22 +385,29 @@ function setupReviewsCarousel() {
     const next = slides[nextIndex];
 
     current.classList.remove("is-current");
-    if (canAnimate) {
-      current.style.transform = `translateX(${dir > 0 ? -64 : 64}px)`;
-
-      next.style.transition = "none";
-      next.style.transform = `translateX(${dir > 0 ? 64 : -64}px)`;
-      void next.offsetWidth;
-      next.style.transition = "";
-    }
-    next.classList.add("is-current");
-    next.style.transform = "";
-
     index = nextIndex;
+
+    if (!canAnimate) {
+      next.classList.add("is-current");
+      busy = false;
+      return;
+    }
+
+    // старый улетает влево...
+    current.style.transform = `translateX(${dir > 0 ? -64 : 64}px)`;
     setTimeout(() => {
       current.style.transform = "";
-      busy = false;
-    }, canAnimate ? transitionMs : 0);
+      // ...затем новый выезжает слева
+      next.style.transition = "none";
+      next.style.transform = "translateX(-64px)";
+      void next.offsetWidth;
+      next.style.transition = "";
+      next.classList.add("is-current");
+      next.style.transform = "";
+      setTimeout(() => {
+        busy = false;
+      }, transitionMs);
+    }, transitionMs);
   };
 
   const go = (dir) => {

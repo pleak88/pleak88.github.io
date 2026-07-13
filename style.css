@@ -645,7 +645,7 @@ html.js .reveal.is-visible {
   align-items: flex-start;
   gap: 16px;
   opacity: 0;
-  transform: translateX(64px);
+  transform: translateX(-64px);
   transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
   pointer-events: none;
 }
