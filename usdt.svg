@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 132">
+  <!-- USDT -->
+  <text x="150" y="70"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        font-family="Manrope, Helvetica, sans-serif"
+        font-size="100"
+        font-weight="bold"
+        fill="white">
+    USDT
+  </text>
+
+  <!-- TRC20 -->
+  <text x="236" y="122"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        font-family="Manrope, Helvetica, sans-serif"
+        font-size="40"
+        font-weight="bold"
+        fill="red">
+    TRC20
+  </text>
+</svg>
