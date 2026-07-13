@@ -645,14 +645,17 @@ html.js .reveal.is-visible {
   align-items: flex-start;
   gap: 16px;
   opacity: 0;
-  transform: translateX(-64px);
-  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+  transform: translateX(-90px);
+  /* уход: power2.in — ускоряется улетая */
+  transition: opacity 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53), transform 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53);
   pointer-events: none;
 }
 
 .reviews-stack .reviews-section__card.is-current {
   opacity: 1;
   transform: none;
+  /* приход: expo.out — мягкое GSAP-торможение */
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: auto;
 }
 

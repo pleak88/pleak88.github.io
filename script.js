@@ -345,7 +345,8 @@ function setupReviewsCarousel() {
   if (slides.length < 2) return;
 
   const autoDelayMs = 5200;
-  const transitionMs = 500;
+  const leaveMs = 400;
+  const enterMs = 750;
   const canAnimate = !prefersReducedMotion;
 
   // случайный порядок при каждой загрузке (Fisher–Yates)
@@ -394,20 +395,20 @@ function setupReviewsCarousel() {
     }
 
     // старый улетает влево...
-    current.style.transform = `translateX(${dir > 0 ? -64 : 64}px)`;
+    current.style.transform = `translateX(${dir > 0 ? -70 : 70}px)`;
     setTimeout(() => {
       current.style.transform = "";
       // ...затем новый выезжает слева
       next.style.transition = "none";
-      next.style.transform = "translateX(-64px)";
+      next.style.transform = "translateX(-90px)";
       void next.offsetWidth;
       next.style.transition = "";
       next.classList.add("is-current");
       next.style.transform = "";
       setTimeout(() => {
         busy = false;
-      }, transitionMs);
-    }, transitionMs);
+      }, enterMs);
+    }, leaveMs);
   };
 
   const go = (dir) => {
