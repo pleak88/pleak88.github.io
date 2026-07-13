@@ -432,9 +432,8 @@ html.js .reveal.is-visible {
   gap: 8px;
   padding: 10px;
   border: 1px solid transparent;
-  background: var(--fill-strong) padding-box, var(--edge) border-box;
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
-  backdrop-filter: blur(32px) saturate(200%);
+  /* непрозрачный фон: backdrop-blur вспыхивал прямоугольником поверх кнопок при открытии */
+  background: linear-gradient(150deg, #202024, #151518) padding-box, var(--edge) border-box;
   border-radius: 20px;
   box-shadow: var(--shadow-pop), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   opacity: 0;
@@ -1014,6 +1013,11 @@ html.js .reveal.is-visible {
 
   .cta-btn {
     text-align: left;
+  }
+
+  /* Адрес и Телефон дублируются в нижнем доке — в хиро не нужны */
+  .quick-actions > a.cta-btn {
+    display: none;
   }
 
   /* донат-меню раскрывается ВВЕРХ, чтобы не уходить под fixed-док */
