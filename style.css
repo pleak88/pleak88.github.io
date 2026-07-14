@@ -642,6 +642,8 @@ html.js .reveal.is-visible {
 /* один слайд, GSAP-стиль: уход влево с затуханием, приход справа с осветлением */
 .reviews-stack {
   display: grid;
+  /* обрезаем ходовые слайды: за границей колонки ничего не торчит */
+  overflow: clip;
 }
 
 /* переходы слайдов целиком на Web Animations API (см. script.js):
