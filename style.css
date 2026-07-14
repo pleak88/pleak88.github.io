@@ -284,12 +284,17 @@ html.js .reveal.is-visible {
 
 .hero-actions {
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 276px;
+  max-width: 100%;
 }
 
 .hero-buttons .book-btn {
-  height: 100%;
+  flex: 1;
   margin: 0;
-  border-radius: 24px;
+  padding-block: 9px;
+  border-radius: 20px;
 }
 
 .hero-rating__stars {
@@ -920,6 +925,13 @@ html.js .reveal.is-visible {
 
   .hero-intro {
     padding-block: 28px 36px;
+    min-height: calc(100svh - 60px);
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-intro > .hero-grid {
+    width: 100%;
   }
 
   .about-inner {
@@ -1005,13 +1017,22 @@ html.js .reveal.is-visible {
     margin-top: 24px;
   }
 
+  /* Адрес и Телефон в доке; Записаться тоже — в хиро остаётся только Donate */
+  .quick-actions {
+    display: none;
+  }
+
   .hero-actions {
     width: 100%;
-    justify-content: center;
+    align-items: center;
+  }
+
+  .hero-actions .support-dropdown {
+    width: 100%;
   }
 
   .hero-buttons .book-btn {
-    height: auto;
+    display: none;
   }
 
   .hero-rating {
@@ -1030,11 +1051,6 @@ html.js .reveal.is-visible {
 
   .cta-btn {
     text-align: left;
-  }
-
-  /* Адрес и Телефон дублируются в нижнем доке — в хиро не нужны */
-  .quick-actions > a.cta-btn {
-    display: none;
   }
 
   /* донат-меню раскрывается ВВЕРХ, чтобы не уходить под fixed-док */
