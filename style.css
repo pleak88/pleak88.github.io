@@ -324,7 +324,7 @@ html.js .reveal.is-visible {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-width: 460px;
+  max-width: 276px;
   animation-delay: 0.38s;
 }
 
