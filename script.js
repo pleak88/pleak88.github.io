@@ -522,6 +522,401 @@ function setupSupportDropdown() {
 }
 
 function setupBackgroundVideos() {
+  const videos = Array.from(document.querySelectorAll(".vibe-video"));
+  if (!videos.length) return;
+
+  if (prefersReducedMotion) {
+    videos.forEach((video) => {
+      video.removeAttribute("autoplay");
+      video.pause();
+    });
+    return;
+  }
+
+  const tryPlay = (video) => {
+    video.muted = true;
+    video.playsInline = true;
+    const promise = video.play();
+    if (promise) promise.catch(() => {});
+  };
+
+  videos.forEach((video) => {
+    if (video.readyState >= 2) {
+      tryPlay(video);
+    } else {
+      video.addEventListener("canplay", () => tryPlay(video), { once: true });
+      video.load();
+    }
+  });
+
+  // iOS (Low Power Mode и пр.) блокирует автоплей — повторяем на первом жесте
+  const retry = () => {
+    videos.forEach((video) => {
+      if (video.paused) tryPlay(video);
+    });
+  };
+  window.addEventListener("touchstart", retry, { once: true, passive: true });
+  window.addEventListener("click", retry, { once: true, passive: true });
+
+  // играть только в кадре: iOS охотнее стартует по появлению, плюс экономия батареи
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target;
+          if (entry.isIntersecting) {
+            if (video.paused) tryPlay(video);
+          } else {
+            video.pause();
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+    videos.forEach((video) => io.observe(video));
+  }
+}
+
+function setupScrollTextReveal() {
+  const el = document.querySelector("[data-scroll-text]");
+  if (!el || prefersReducedMotion) return;
+
+  let spans = [];
+
+  const split = () => {
+    const words = el.textContent.trim().split(/\s+/);
+    el.innerHTML = words.map((w) => `<span class="w">${w}</span>`).join(" ");
+    spans = Array.from(el.querySelectorAll(".w"));
+    update();
+  };
+
+  const update = () => {
+    if (!spans.length) return;
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const start = vh * 0.9;
+    const end = vh * 0.45;
+    const progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+    const raw = progress * spans.length;
+    spans.forEach((span, index) => {
+      const t = Math.min(1, Math.max(0, raw - index));
+      span.style.opacity = (0.14 + 0.86 * t).toFixed(3);
+    });
+  };
+
+  let ticking = false;
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        update();
+        ticking = false;
+      });
+    },
+    { passive: true }
+  );
+
+  refreshScrollText = split;
+  split();
+}
+
+function setupRevealAnimations() {
+  const nodes = document.querySelectorAll(".reveal");
+  if (!nodes.length) return;
+
+  if (prefersReducedMotion || !("IntersectionObserver" in window)) {
+    nodes.forEach((el) => el.classList.add("is-visible"));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        obs.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.15, rootMargin: "0px 0px -6% 0px" }
+  );
+
+  nodes.forEach((el) => {
+    const delay = Number(el.dataset.delay || "0");
+    el.style.setProperty("--reveal-delay", `${delay}s`);
+    observer.observe(el);
+  });
+}
+
+function setupParallax() {
+  if (prefersReducedMotion) return;
+
+  const heroSection = document.querySelector(".hero-intro");
+  const heroCopy = document.querySelector(".hero-copy");
+  const heroPhoto = document.querySelector(".hero-photo");
+  const revSection = document.querySelector(".reviews-panel");
+  const revLeft = document.querySelector(".reviews-side");
+  const revRight = document.querySelector(".reviews-media");
+  const aboutSection = document.querySelector(".about-note");
+  const aboutMedia = document.querySelector(".about-media");
+  if (!heroSection && !revSection && !aboutSection) return;
+
+  // инерционное сглаживание скролла — GSAP-scrub плавность
+  let smoothY = window.scrollY;
+  let rafId = null;
+
+  const clamp01 = (v) => Math.min(1, Math.max(0, v));
+
+  const apply = () => {
+    const desktop = window.innerWidth > 820;
+
+    if (heroSection && heroCopy && heroPhoto) {
+      if (desktop) {
+        const limit = Math.max(heroSection.offsetHeight * 0.85, 1);
+        const p = clamp01(smoothY / limit);
+        const shift = (p * 170).toFixed(2);
+        const fade = (1 - p * 0.75).toFixed(3);
+        heroCopy.style.transform = `translate3d(-${shift}px, 0, 0)`;
+        heroCopy.style.opacity = fade;
+        heroPhoto.style.transform = `translate3d(${shift}px, ${(smoothY * -0.08).toFixed(2)}px, 0)`;
+        heroPhoto.style.opacity = fade;
+      } else {
+        heroCopy.style.transform = "";
+        heroCopy.style.opacity = "";
+        heroPhoto.style.transform = `translate3d(0, ${(smoothY * -0.08).toFixed(2)}px, 0)`;
+        heroPhoto.style.opacity = "";
+      }
+    }
+
+    // «Обо мне»: видео-круг растёт 0.8 → 1, пока долистываем до секции
+    if (aboutSection && aboutMedia) {
+      const vh = window.innerHeight;
+      const top = aboutSection.offsetTop - smoothY;
+      const p = clamp01((vh - top) / (vh * 0.85));
+      aboutMedia.style.transform = `translate3d(0, ${((1 - p) * 70).toFixed(2)}px, 0) scale(${(0.6 + 0.4 * p).toFixed(4)})`;
+    }
+
+    if (revSection && revLeft && revRight) {
+      if (desktop) {
+        const vh = window.innerHeight;
+        const top = revSection.offsetTop - smoothY;
+        const startEdge = vh * 1.0;
+        const endEdge = vh * 0.35;
+        // у конца страницы прогресс докручивается до 1, чтобы элементы соединились
+        const maxScroll = document.documentElement.scrollHeight - vh;
+        const endP = maxScroll > 0 ? clamp01(1 - (maxScroll - smoothY) / (vh * 0.35)) : 0;
+        const p = Math.max(clamp01((startEdge - top) / (startEdge - endEdge)), endP);
+        const shift = ((1 - p) * 170).toFixed(2);
+        const fade = (0.15 + 0.85 * p).toFixed(3);
+        revLeft.style.transform = `translate3d(-${shift}px, ${((1 - p) * 40).toFixed(2)}px, 0)`;
+        revLeft.style.opacity = fade;
+        revRight.style.transform = `translate3d(${shift}px, ${((1 - p) * 80).toFixed(2)}px, 0)`;
+        revRight.style.opacity = fade;
+      } else {
+        revLeft.style.transform = "";
+        revLeft.style.opacity = "";
+        revRight.style.transform = "";
+        revRight.style.opacity = "";
+      }
+    }
+  };
+
+  const tick = () => {
+    const target = window.scrollY;
+    smoothY += (target - smoothY) * 0.12;
+    if (Math.abs(target - smoothY) < 0.4) {
+      smoothY = target;
+      apply();
+      rafId = null;
+      return;
+    }
+    apply();
+    rafId = requestAnimationFrame(tick);
+  };
+
+  const kick = () => {
+    if (rafId === null) rafId = requestAnimationFrame(tick);
+  };
+
+  window.addEventListener("scroll", kick, { passive: true });
+  window.addEventListener("resize", kick, { passive: true });
+
+  apply();
+}
+
+function setupReviewsCarousel() {
+  const root = document.getElementById("reviewsCarousel");
+  if (!root) return;
+
+  const stack = root.querySelector(".reviews-stack");
+  const prevBtn = root.querySelector(".car-prev");
+  const nextBtn = root.querySelector(".car-next");
+  if (!stack) return;
+
+  let slides = Array.from(stack.children);
+  if (slides.length < 2) return;
+
+  const autoDelayMs = 5200;
+  const canAnimate = !prefersReducedMotion && typeof Element.prototype.animate === "function";
+
+  // случайный порядок при каждой загрузке (Fisher–Yates)
+  for (let i = slides.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [slides[i], slides[j]] = [slides[j], slides[i]];
+  }
+  slides.forEach((slide) => stack.appendChild(slide));
+
+  // логотипы источников вместо надписей; лого + звёзды одним рядом сверху
+  slides.forEach((card) => {
+    const source = card.querySelector(".reviews-section__source");
+    if (!source) return;
+    const label = source.textContent.trim();
+    source.setAttribute("aria-label", label);
+    const icon = /google/i.test(label) ? "i-google" : "i-booksy";
+    source.innerHTML = `<svg class="src-logo" viewBox="0 0 24 24" aria-hidden="true"><use href="/sprite.svg#${icon}"></use></svg>`;
+    const row = document.createElement("div");
+    row.className = "reviews-src-row";
+    row.append(source);
+    const rating = card.querySelector(".reviews-section__rating");
+    if (rating) row.append(rating);
+    card.prepend(row);
+  });
+
+  let index = 0;
+  let timer = null;
+  let activeAnims = [];
+
+  slides[0].classList.add("is-current");
+
+  // мгновенно завершить текущий переход: уходящий скрыт, входящий на месте
+  const settle = () => {
+    activeAnims.forEach((anim) => {
+      try {
+        anim.finish();
+      } catch (_e) {
+        anim.cancel();
+      }
+    });
+    activeAnims = [];
+  };
+
+  const go = (dir) => {
+    settle();
+
+    const from = slides[index];
+    index = (index + dir + slides.length) % slides.length;
+    const to = slides[index];
+    if (from === to) return;
+
+    from.classList.remove("is-current");
+    to.classList.add("is-current");
+
+    if (!canAnimate) return;
+
+    // уход: короткий сдвиг в сторону листания с затуханием
+    const out = from.animate(
+      [
+        { transform: "translateX(0)", opacity: 1, visibility: "visible" },
+        { transform: `translateX(${dir > 0 ? -70 : 70}px)`, opacity: 0, visibility: "visible" },
+      ],
+      { duration: 240, easing: "cubic-bezier(0.35, 0, 0.75, 0.5)" }
+    );
+
+    // вход: после ухода, выезжает слева с expo.out-торможением
+    const inn = to.animate(
+      [
+        { transform: "translateX(-90px)", opacity: 0 },
+        { transform: "translateX(0)", opacity: 1 },
+      ],
+      { duration: 650, delay: 190, fill: "backwards", easing: "cubic-bezier(0.16, 1, 0.3, 1)" }
+    );
+
+    activeAnims = [out, inn];
+    inn.onfinish = () => {
+      activeAnims = [];
+    };
+  };
+
+  const startAutoplay = () => {
+    if (timer) clearInterval(timer);
+    timer = setInterval(() => go(1), autoDelayMs);
+  };
+
+  const stopAutoplay = () => {
+    if (!timer) return;
+    clearInterval(timer);
+    timer = null;
+  };
+
+  if (prevBtn) prevBtn.addEventListener("click", () => { go(-1); startAutoplay(); });
+  if (nextBtn) nextBtn.addEventListener("click", () => { go(1); startAutoplay(); });
+
+  root.addEventListener("mouseenter", stopAutoplay);
+  root.addEventListener("mouseleave", startAutoplay);
+  root.addEventListener("focusin", stopAutoplay);
+  root.addEventListener("focusout", startAutoplay);
+
+  startAutoplay();
+}
+
+function setupSupportDropdown() {
+  const toggle = document.getElementById("supportToggle");
+  const menu = document.getElementById("supportMenu");
+  if (!toggle || !menu) return;
+  const dropdown = toggle.closest(".support-dropdown");
+  if (!dropdown) return;
+  const showToast = setupCopyToast();
+
+  menu.hidden = false;
+
+  const close = () => {
+    toggle.setAttribute("aria-expanded", "false");
+    dropdown.classList.remove("is-open");
+  };
+
+  const open = () => {
+    toggle.setAttribute("aria-expanded", "true");
+    dropdown.classList.add("is-open");
+  };
+
+  toggle.addEventListener("click", () => {
+    const isOpen = toggle.getAttribute("aria-expanded") === "true";
+    if (isOpen) {
+      close();
+      return;
+    }
+    open();
+  });
+
+  document.addEventListener("click", (event) => {
+    if (dropdown.classList.contains("is-open") && !event.target.closest(".support-dropdown")) {
+      close();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && dropdown.classList.contains("is-open")) {
+      close();
+    }
+  });
+
+  menu.querySelectorAll(".support-item").forEach((item) => {
+    item.addEventListener("click", async (event) => {
+      event.preventDefault();
+      const walletValue = item.dataset.wallet || "";
+      const copied = await copyToClipboard(walletValue);
+
+      if (copied) {
+        showToast(t("wallet_copied", { value: walletValue }));
+      } else {
+        showToast(t("wallet_copy_failed", { value: walletValue }), true);
+      }
+    });
+  });
+}
+
+function setupBackgroundVideos() {
   document.querySelectorAll(".vibe-video").forEach((video) => {
     if (prefersReducedMotion) {
       video.removeAttribute("autoplay");
