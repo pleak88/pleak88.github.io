@@ -998,7 +998,7 @@ html.js .reveal.is-visible {
   }
 
   .hero-buttons {
-    flex-direction: column-reverse;
+    flex-direction: column;
     align-items: center;
     gap: 14px;
     width: 100%;
