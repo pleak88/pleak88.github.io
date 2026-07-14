@@ -298,8 +298,8 @@ function setupParallax() {
     if (aboutSection && aboutMedia) {
       const vh = window.innerHeight;
       const top = aboutSection.offsetTop - smoothY;
-      const p = clamp01((vh - top) / (vh * 0.6));
-      aboutMedia.style.transform = `scale(${(0.6 + 0.4 * p).toFixed(4)})`;
+      const p = clamp01((vh - top) / (vh * 0.85));
+      aboutMedia.style.transform = `translate3d(0, ${((1 - p) * 70).toFixed(2)}px, 0) scale(${(0.6 + 0.4 * p).toFixed(4)})`;
     }
 
     if (revSection && revLeft && revRight) {
