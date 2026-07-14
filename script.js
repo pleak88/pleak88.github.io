@@ -31,7 +31,7 @@ const translations = {
     action_call: "Позвонить",
     support_btn: "Поддержать",
     support_action: "Выбрать",
-    book_btn: "Записаться сейчас",
+    book_btn: "Записаться",
     reviews_title: "Отзывы клиентов",
     rating_caption: "5.0 на Google и Booksy",
     about_title: "Обо мне",
