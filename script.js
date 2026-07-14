@@ -263,7 +263,9 @@ function setupParallax() {
   const revSection = document.querySelector(".reviews-panel");
   const revLeft = document.querySelector(".reviews-side");
   const revRight = document.querySelector(".reviews-media");
-  if (!heroSection && !revSection) return;
+  const aboutSection = document.querySelector(".about-note");
+  const aboutMedia = document.querySelector(".about-media");
+  if (!heroSection && !revSection && !aboutSection) return;
 
   // инерционное сглаживание скролла — GSAP-scrub плавность
   let smoothY = window.scrollY;
@@ -292,18 +294,29 @@ function setupParallax() {
       }
     }
 
+    // «Обо мне»: видео-круг растёт 0.8 → 1, пока долистываем до секции
+    if (aboutSection && aboutMedia) {
+      const vh = window.innerHeight;
+      const top = aboutSection.offsetTop - smoothY;
+      const p = clamp01((vh - top) / (vh * 0.6));
+      aboutMedia.style.transform = `scale(${(0.8 + 0.2 * p).toFixed(4)})`;
+    }
+
     if (revSection && revLeft && revRight) {
       if (desktop) {
         const vh = window.innerHeight;
         const top = revSection.offsetTop - smoothY;
         const startEdge = vh * 1.0;
         const endEdge = vh * 0.35;
-        const p = clamp01((startEdge - top) / (startEdge - endEdge));
+        // у конца страницы прогресс докручивается до 1, чтобы элементы соединились
+        const maxScroll = document.documentElement.scrollHeight - vh;
+        const endP = maxScroll > 0 ? clamp01(1 - (maxScroll - smoothY) / (vh * 0.35)) : 0;
+        const p = Math.max(clamp01((startEdge - top) / (startEdge - endEdge)), endP);
         const shift = ((1 - p) * 170).toFixed(2);
         const fade = (0.15 + 0.85 * p).toFixed(3);
-        revLeft.style.transform = `translate3d(-${shift}px, 0, 0)`;
+        revLeft.style.transform = `translate3d(-${shift}px, ${((1 - p) * 40).toFixed(2)}px, 0)`;
         revLeft.style.opacity = fade;
-        revRight.style.transform = `translate3d(${shift}px, 0, 0)`;
+        revRight.style.transform = `translate3d(${shift}px, ${((1 - p) * 80).toFixed(2)}px, 0)`;
         revRight.style.opacity = fade;
       } else {
         revLeft.style.transform = "";
@@ -350,7 +363,7 @@ function setupReviewsCarousel() {
   if (slides.length < 2) return;
 
   const autoDelayMs = 5200;
-  const leaveMs = 400;
+  const leaveMs = 280;
   const enterMs = 750;
   const canAnimate = !prefersReducedMotion;
 
