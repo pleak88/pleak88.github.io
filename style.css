@@ -221,10 +221,9 @@ html.js .reveal.is-visible {
   border: 0;
   background: transparent;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  letter-spacing: 0.03em;
-  padding: 7px 13px;
+  padding: 6px 9px;
   border-radius: 999px;
   transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out);
 }
@@ -1123,7 +1122,7 @@ html.js .reveal.is-visible {
   }
 
   .lang-btn {
-    padding: 6px 10px;
+    padding: 5px 8px;
   }
 
   .hero-copy h1 {
