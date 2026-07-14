@@ -644,6 +644,8 @@ html.js .reveal.is-visible {
   display: grid;
 }
 
+/* переходы слайдов целиком на Web Animations API (см. script.js):
+   CSS-transition здесь не место — гонки с inline-стилями давали фантомы */
 .reviews-stack .reviews-section__card {
   grid-area: 1 / 1;
   display: flex;
@@ -651,18 +653,14 @@ html.js .reveal.is-visible {
   align-items: flex-start;
   gap: 16px;
   opacity: 0;
-  transform: translateX(-90px);
+  visibility: hidden;
   will-change: transform, opacity;
-  /* уход: короткий, почти линейный — без «прилипания» на старте */
-  transition: opacity 0.28s cubic-bezier(0.35, 0, 0.75, 0.5), transform 0.28s cubic-bezier(0.35, 0, 0.75, 0.5);
   pointer-events: none;
 }
 
 .reviews-stack .reviews-section__card.is-current {
   opacity: 1;
-  transform: none;
-  /* приход: expo.out — мягкое GSAP-торможение */
-  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  visibility: visible;
   pointer-events: auto;
 }
 

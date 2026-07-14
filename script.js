@@ -363,9 +363,7 @@ function setupReviewsCarousel() {
   if (slides.length < 2) return;
 
   const autoDelayMs = 5200;
-  const leaveMs = 280;
-  const enterMs = 750;
-  const canAnimate = !prefersReducedMotion;
+  const canAnimate = !prefersReducedMotion && typeof Element.prototype.animate === "function";
 
   // случайный порядок при каждой загрузке (Fisher–Yates)
   for (let i = slides.length - 1; i > 0; i--) {
@@ -391,47 +389,58 @@ function setupReviewsCarousel() {
   });
 
   let index = 0;
-  let busy = false;
   let timer = null;
+  let activeAnims = [];
 
   slides[0].classList.add("is-current");
 
-  const show = (nextIndex, dir) => {
-    if (busy || nextIndex === index) return;
-    busy = true;
-
-    const current = slides[index];
-    const next = slides[nextIndex];
-
-    current.classList.remove("is-current");
-    index = nextIndex;
-
-    if (!canAnimate) {
-      next.classList.add("is-current");
-      busy = false;
-      return;
-    }
-
-    // старый улетает влево...
-    current.style.transform = `translateX(${dir > 0 ? -70 : 70}px)`;
-    setTimeout(() => {
-      current.style.transform = "";
-      // ...затем новый выезжает слева
-      next.style.transition = "none";
-      next.style.transform = "translateX(-90px)";
-      void next.offsetWidth;
-      next.style.transition = "";
-      next.classList.add("is-current");
-      next.style.transform = "";
-      setTimeout(() => {
-        busy = false;
-      }, enterMs);
-    }, leaveMs);
+  // мгновенно завершить текущий переход: уходящий скрыт, входящий на месте
+  const settle = () => {
+    activeAnims.forEach((anim) => {
+      try {
+        anim.finish();
+      } catch (_e) {
+        anim.cancel();
+      }
+    });
+    activeAnims = [];
   };
 
   const go = (dir) => {
-    const nextIndex = (index + dir + slides.length) % slides.length;
-    show(nextIndex, dir);
+    settle();
+
+    const from = slides[index];
+    index = (index + dir + slides.length) % slides.length;
+    const to = slides[index];
+    if (from === to) return;
+
+    from.classList.remove("is-current");
+    to.classList.add("is-current");
+
+    if (!canAnimate) return;
+
+    // уход: короткий сдвиг в сторону листания с затуханием
+    const out = from.animate(
+      [
+        { transform: "translateX(0)", opacity: 1, visibility: "visible" },
+        { transform: `translateX(${dir > 0 ? -70 : 70}px)`, opacity: 0, visibility: "visible" },
+      ],
+      { duration: 240, easing: "cubic-bezier(0.35, 0, 0.75, 0.5)" }
+    );
+
+    // вход: после ухода, выезжает слева с expo.out-торможением
+    const inn = to.animate(
+      [
+        { transform: "translateX(-90px)", opacity: 0 },
+        { transform: "translateX(0)", opacity: 1 },
+      ],
+      { duration: 650, delay: 190, fill: "backwards", easing: "cubic-bezier(0.16, 1, 0.3, 1)" }
+    );
+
+    activeAnims = [out, inn];
+    inn.onfinish = () => {
+      activeAnims = [];
+    };
   };
 
   const startAutoplay = () => {
@@ -454,8 +463,6 @@ function setupReviewsCarousel() {
   root.addEventListener("focusout", startAutoplay);
 
   startAutoplay();
-
-  window.addEventListener("beforeunload", stopAutoplay);
 }
 
 function setupSupportDropdown() {
