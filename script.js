@@ -299,7 +299,7 @@ function setupParallax() {
       const vh = window.innerHeight;
       const top = aboutSection.offsetTop - smoothY;
       const p = clamp01((vh - top) / (vh * 0.6));
-      aboutMedia.style.transform = `scale(${(0.8 + 0.2 * p).toFixed(4)})`;
+      aboutMedia.style.transform = `scale(${(0.6 + 0.4 * p).toFixed(4)})`;
     }
 
     if (revSection && revLeft && revRight) {
