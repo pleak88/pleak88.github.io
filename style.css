@@ -274,12 +274,22 @@ html.js .reveal.is-visible {
   animation-delay: 0.14s;
 }
 
-.hero-actions {
+.hero-buttons {
   margin-top: 30px;
   display: flex;
-  align-items: center;
-  gap: 32px;
-  animation-delay: 0.22s;
+  align-items: stretch;
+  gap: 14px;
+  animation-delay: 0.24s;
+}
+
+.hero-actions {
+  display: flex;
+}
+
+.hero-buttons .book-btn {
+  height: 100%;
+  margin: 0;
+  border-radius: 24px;
 }
 
 .hero-rating__stars {
@@ -320,12 +330,11 @@ html.js .reveal.is-visible {
 }
 
 .quick-actions {
-  margin-top: 30px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-width: 276px;
-  animation-delay: 0.38s;
+  width: 276px;
+  max-width: 100%;
 }
 
 /* Liquid glass action rows */
@@ -988,11 +997,21 @@ html.js .reveal.is-visible {
     font-size: 1.05rem;
   }
 
-  .hero-actions {
-    flex-direction: column;
-    gap: 18px;
+  .hero-buttons {
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 14px;
     width: 100%;
     margin-top: 24px;
+  }
+
+  .hero-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-buttons .book-btn {
+    height: auto;
   }
 
   .hero-rating {
