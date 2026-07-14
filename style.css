@@ -247,7 +247,7 @@ html.js .reveal.is-visible {
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: clamp(36px, 6vw, 80px);
+  gap: clamp(36px, 6vw, 78px);
   align-items: center;
 }
 
