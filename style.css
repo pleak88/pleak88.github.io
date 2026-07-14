@@ -278,7 +278,7 @@ html.js .reveal.is-visible {
   margin-top: 30px;
   display: flex;
   align-items: stretch;
-  gap: 14px;
+  gap: 10px;
   animation-delay: 0.24s;
 }
 
