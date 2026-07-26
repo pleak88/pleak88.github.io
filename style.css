@@ -1030,10 +1030,19 @@ html.js .about-inner {
     position: relative;
     z-index: 2;
     margin-top: -100svh;
+    /* не короче глубины наезда: иначе хвост about вылезает ниже футера */
+    min-height: 100svh;
     padding-top: 44px;
     background: #0a0a0c;
     border-top: 1px solid var(--hairline);
     box-shadow: 0 -24px 60px -20px rgba(0, 0, 0, 0.8);
+    /* контент по центру секции — на высоких экранах пустота не копится снизу */
+    display: flex;
+    align-items: center;
+  }
+
+  html.js .reviews-panel > .reviews-flex {
+    width: 100%;
   }
 
   .reviews-media {
@@ -1113,8 +1122,7 @@ html.js .about-inner {
   }
 
   .footer-links {
-    justify-content: flex-start;
-    width: 100%;
+    justify-content: center;
   }
 
   /* футер в одном слое с карточкой отзывов — под ним хвост about-секции */
