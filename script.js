@@ -1,5 +1,8 @@
 ﻿document.documentElement.classList.add("js");
 
+// версия сайта: только визуально, в статичном HTML её нет (SEO-нейтрально)
+const SITE_VERSION = "2.0";
+
 const translations = {
   en: {
     hero_title: "Barber Katia",
@@ -211,7 +214,7 @@ function setupScrollTextReveal() {
     if (!spans.length || !section) return;
     const runway = Math.max(section.offsetHeight - window.innerHeight, 1);
     // на мобиле текст дочитывается раньше — снизу уже наезжает карточка отзывов
-    const k = window.innerWidth <= 820 ? 0.68 : 0.82;
+    const k = window.innerWidth <= 820 ? 0.6 : 0.82;
     const p = clamp01((smoothY - section.offsetTop) / (runway * k));
     const raw = p * spans.length;
     // писать стиль только при изменении: 40 записей/кадр дёргали скролл на iOS
@@ -651,6 +654,8 @@ function setupBackgroundVideos() {
 }
 
 function init() {
+  const ver = document.querySelector(".footer-ver");
+  if (ver) ver.textContent = `v${SITE_VERSION}`;
   setupLanguageToggle();
   setupBackgroundVideos();
   setupScrollTextReveal();

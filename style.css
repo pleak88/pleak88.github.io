@@ -1010,15 +1010,19 @@ html.js .about-inner {
     gap: 26px;
   }
 
-  /* отзывы наезжают карточкой на запиненное «Обо мне» */
+  /* отзывы наезжают на запиненное «Обо мне»; наезд -100svh = ровно к моменту
+     полного перекрытия экрана заканчивается и пин — about не двигается вообще */
+  html.js .about-note {
+    height: 280svh;
+  }
+
   html.js .reviews-panel {
     position: relative;
     z-index: 2;
-    margin-top: -60svh;
+    margin-top: -100svh;
     padding-top: 44px;
     background: #0a0a0c;
     border-top: 1px solid var(--hairline);
-    border-radius: 28px 28px 0 0;
     box-shadow: 0 -24px 60px -20px rgba(0, 0, 0, 0.8);
   }
 
