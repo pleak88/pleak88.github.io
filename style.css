@@ -845,6 +845,12 @@ html.js .about-inner {
   letter-spacing: -0.01em;
 }
 
+.footer-ver {
+  color: var(--muted);
+  font-size: 0.7em;
+  font-weight: 500;
+}
+
 .footer-address {
   color: var(--muted);
   font-size: 0.92rem;
@@ -1002,6 +1008,18 @@ html.js .about-inner {
   .reviews-flex {
     grid-template-columns: minmax(0, 1fr);
     gap: 26px;
+  }
+
+  /* отзывы наезжают карточкой на запиненное «Обо мне» */
+  html.js .reviews-panel {
+    position: relative;
+    z-index: 2;
+    margin-top: -60svh;
+    padding-top: 44px;
+    background: #0a0a0c;
+    border-top: 1px solid var(--hairline);
+    border-radius: 28px 28px 0 0;
+    box-shadow: 0 -24px 60px -20px rgba(0, 0, 0, 0.8);
   }
 
   .reviews-media {

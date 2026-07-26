@@ -210,7 +210,9 @@ function setupScrollTextReveal() {
   updateAboutWords = (smoothY) => {
     if (!spans.length || !section) return;
     const runway = Math.max(section.offsetHeight - window.innerHeight, 1);
-    const p = clamp01((smoothY - section.offsetTop) / (runway * 0.82));
+    // на мобиле текст дочитывается раньше — снизу уже наезжает карточка отзывов
+    const k = window.innerWidth <= 820 ? 0.68 : 0.82;
+    const p = clamp01((smoothY - section.offsetTop) / (runway * k));
     const raw = p * spans.length;
     // писать стиль только при изменении: 40 записей/кадр дёргали скролл на iOS
     spans.forEach((span, index) => {
