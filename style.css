@@ -486,8 +486,9 @@ html.js .reveal.is-visible {
 }
 
 .usdt {
-  background-image: url(/usdt.svg);
-  background-size: 52px auto;
+  background-image: url(/usdt.svg?v=2);
+  /* круглая монета Tether — меньше, чем широкие вордмарки соседей */
+  background-size: 32px auto;
 }
 
 .revolut {
@@ -1244,7 +1245,7 @@ html.js .about-inner {
   }
 
   .donate-fab__menu .usdt {
-    background-size: 40px auto;
+    background-size: 28px auto;
   }
 
   .donate-fab__menu .revolut {
