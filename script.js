@@ -1,7 +1,7 @@
 ﻿document.documentElement.classList.add("js");
 
 // версия сайта: только визуально, в статичном HTML её нет (SEO-нейтрально)
-const SITE_VERSION = "2.0";
+const SITE_VERSION = "2.1";
 
 const translations = {
   en: {
@@ -213,8 +213,9 @@ function setupScrollTextReveal() {
   updateAboutWords = (smoothY) => {
     if (!spans.length || !section) return;
     const runway = Math.max(section.offsetHeight - window.innerHeight, 1);
-    // на мобиле текст дочитывается раньше — снизу уже наезжает карточка отзывов
-    const k = window.innerWidth <= 820 ? 0.6 : 0.82;
+    // на мобиле текст дочитывается к половине пина — карточка отзывов
+    // начинает наезжать только после этого
+    const k = window.innerWidth <= 820 ? 0.5 : 0.82;
     const p = clamp01((smoothY - section.offsetTop) / (runway * k));
     const raw = p * spans.length;
     // писать стиль только при изменении: 40 записей/кадр дёргали скролл на iOS
