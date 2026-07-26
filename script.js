@@ -304,17 +304,18 @@ function setupParallax() {
 
     if (revSection && revLeft && revRight) {
       const top = revSection.offsetTop - smoothY;
-      const startEdge = vh * 1.0;
-      const endEdge = vh * 0.35;
+      // мобиле: диапазон длиннее — движение растянуто почти на весь экран скролла
+      const startEdge = vh * (mobile ? 1.1 : 1.0);
+      const endEdge = vh * (mobile ? 0.12 : 0.35);
       // у конца страницы прогресс докручивается до 1, чтобы элементы соединились
       const maxScroll = document.documentElement.scrollHeight - vh;
       const endP = maxScroll > 0 ? clamp01(1 - (maxScroll - smoothY) / (vh * 0.35)) : 0;
       const p = Math.max(clamp01((startEdge - top) / (startEdge - endEdge)), endP);
       const fade = (0.15 + 0.85 * p).toFixed(3);
       if (mobile) {
-        // мобиле: наоборот — приходят СНИЗУ, вторая половина едет быстрее
-        revLeft.style.transform = `translate3d(0, ${((1 - p) * 70).toFixed(2)}px, 0)`;
-        revRight.style.transform = `translate3d(0, ${((1 - p) * 120).toFixed(2)}px, 0)`;
+        // мобиле: наоборот — приходят СНИЗУ, медиа едет дальше (параллакс)
+        revLeft.style.transform = `translate3d(0, ${((1 - p) * 90).toFixed(2)}px, 0)`;
+        revRight.style.transform = `translate3d(0, ${((1 - p) * 150).toFixed(2)}px, 0)`;
       } else {
         const shift = ((1 - p) * 170).toFixed(2);
         revLeft.style.transform = `translate3d(-${shift}px, ${((1 - p) * 40).toFixed(2)}px, 0)`;
@@ -379,7 +380,7 @@ function setupReviewsCarousel() {
     source.setAttribute("aria-label", label);
     const icon = /google/i.test(label) ? "i-google" : "i-booksy";
     const mod = icon === "i-booksy" ? " src-logo--booksy" : "";
-    source.innerHTML = `<svg class="src-logo${mod}" viewBox="0 0 24 24" aria-hidden="true"><use href="/sprite.svg?v=3#${icon}"></use></svg>`;
+    source.innerHTML = `<svg class="src-logo${mod}" viewBox="0 0 24 24" aria-hidden="true"><use href="/sprite.svg?v=4#${icon}"></use></svg>`;
     const row = document.createElement("div");
     row.className = "reviews-src-row";
     row.append(source);
