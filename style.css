@@ -1113,7 +1113,15 @@ html.js .about-inner {
   }
 
   .footer-links {
-    justify-content: center;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  /* футер в одном слое с карточкой отзывов — под ним хвост about-секции */
+  html.js .footer {
+    position: relative;
+    z-index: 2;
+    background: #0a0a0c;
   }
 
   /* Floating glass dock (iOS tab bar) */

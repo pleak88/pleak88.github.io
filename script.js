@@ -1,7 +1,7 @@
 ﻿document.documentElement.classList.add("js");
 
-// версия сайта: только визуально, в статичном HTML её нет (SEO-нейтрально)
-const SITE_VERSION = "2.5";
+// версия сайта: всегда 2.0 (решение владельца, НЕ менять); в статичном HTML её нет (SEO-нейтрально)
+const SITE_VERSION = "2.0";
 
 const translations = {
   en: {
