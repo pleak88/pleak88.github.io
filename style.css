@@ -452,14 +452,16 @@ html.js .reveal.is-visible {
   box-shadow: var(--shadow-pop), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-6px) scale(0.98);
+  /* без scale: масштабирование пересэмплирует background-логотипы плиток
+     и они «дёргаются» в момент открытия */
+  transform: translateY(-6px);
   transition: opacity 0.22s var(--ease-out), transform 0.22s var(--ease-out), visibility 0s linear 0.22s;
 }
 
 .support-dropdown.is-open .support-menu {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
   transition-delay: 0s;
 }
 
@@ -486,7 +488,7 @@ html.js .reveal.is-visible {
 }
 
 .usdt {
-  background-image: url(/usdt.svg?v=3);
+  background-image: url(/usdt.svg?v=4);
   /* монета Tether + подпись USDT */
   background-size: 62px auto;
 }
@@ -1222,15 +1224,15 @@ html.js .about-inner {
     box-shadow: var(--shadow-pop), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-50%) translateX(12px) scale(0.9);
-    transform-origin: right center;
+    /* без scale — иначе background-логотипы дёргаются при открытии */
+    transform: translateY(-50%) translateX(14px);
     transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out), visibility 0s linear 0.25s;
   }
 
   .donate-fab.is-open .donate-fab__menu {
     opacity: 1;
     visibility: visible;
-    transform: translateY(-50%) translateX(0) scale(1);
+    transform: translateY(-50%) translateX(0);
     transition-delay: 0s;
   }
 
