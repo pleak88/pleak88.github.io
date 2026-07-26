@@ -277,6 +277,7 @@ html.js .reveal.is-visible {
 .hero-buttons {
   margin-top: 30px;
   display: flex;
+  flex-wrap: wrap;
   align-items: stretch;
   gap: 10px;
   animation-delay: 0.24s;
@@ -285,13 +286,15 @@ html.js .reveal.is-visible {
 .hero-actions {
   display: flex;
   flex-direction: column;
+  /* колонки делят ряд поровну; когда двоим тесно — перенос на новую строку */
+  flex: 1 1 240px;
   gap: 10px;
-  width: 276px;
   max-width: 100%;
 }
 
 .hero-buttons .book-btn {
   flex: 1;
+  min-height: 58px;
   margin: 0;
   padding-block: 9px;
   border-radius: 20px;
@@ -337,8 +340,8 @@ html.js .reveal.is-visible {
 .quick-actions {
   display: flex;
   flex-direction: column;
+  flex: 1 1 240px;
   gap: 10px;
-  width: 276px;
   max-width: 100%;
 }
 
@@ -574,6 +577,23 @@ html.js .reveal.is-visible {
   padding-top: clamp(36px, 5vw, 72px);
 }
 
+/* скролл-пин: длинная секция + sticky-экран — текст проявляется, пока страница «стоит» */
+html.js .about-note {
+  height: 240vh;
+  height: 240svh;
+  padding-block: 0;
+}
+
+html.js .about-inner {
+  position: sticky;
+  top: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  align-content: center;
+  border-top: 0;
+  padding-top: 0;
+}
+
 .about-copy h2 {
   font-size: clamp(1.8rem, 3.6vw, 2.8rem);
   letter-spacing: -0.028em;
@@ -616,6 +636,8 @@ html.js .reveal.is-visible {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* собственный композит-слой: скролл-transform круга не перерисовывает кадры видео */
+  transform: translateZ(0);
 }
 
 /* ============ Reviews carousel ============ */
@@ -845,26 +867,28 @@ html.js .reveal.is-visible {
   display: none;
 }
 
-/* ============ Copy toast ============ */
+/* ============ Donate FAB (mobile) ============ */
+.donate-fab {
+  display: none;
+}
+
+/* ============ Copy toast — белая HUD-плашка по центру экрана ============ */
 .copy-toast {
   position: fixed;
-  top: 16px;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, -12px);
+  transform: translate(-50%, -50%) scale(0.86);
   z-index: var(--z-toast);
-  max-width: min(92vw, 520px);
+  max-width: min(92vw, 440px);
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  padding: 12px 18px;
-  border-radius: 16px;
-  border: 1px solid transparent;
-  background: var(--fill-strong) padding-box, var(--edge) border-box;
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
-  backdrop-filter: blur(32px) saturate(200%);
-  color: var(--ink);
-  box-shadow: var(--shadow-pop), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  font-size: 0.92rem;
+  gap: 10px;
+  padding: 16px 22px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.97);
+  color: #0a0a0c;
+  box-shadow: inset 0 1px 0 #fff, 0 32px 70px -18px rgba(0, 0, 0, 0.8);
+  font-size: 0.95rem;
   font-weight: 600;
   line-height: 1.4;
   overflow-wrap: break-word;
@@ -872,7 +896,8 @@ html.js .reveal.is-visible {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.22s var(--ease-out), transform 0.22s var(--ease-out), visibility 0s linear 0.22s;
+  /* apple-пружина на появление, мягкий fade на скрытие */
+  transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out), visibility 0s linear 0.25s;
 }
 
 .copy-toast__icon {
@@ -881,10 +906,10 @@ html.js .reveal.is-visible {
 }
 
 .copy-toast__icon svg {
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
   fill: none;
-  stroke: var(--ink);
+  stroke: #0a0a0c;
   stroke-width: 2.4;
   stroke-miterlimit: 10;
 }
@@ -892,13 +917,12 @@ html.js .reveal.is-visible {
 .copy-toast.is-visible {
   opacity: 1;
   visibility: visible;
-  transform: translate(-50%, 0);
-  transition-delay: 0s;
+  transform: translate(-50%, -50%) scale(1);
+  transition: opacity 0.2s var(--ease-out), transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0s;
 }
 
 .copy-toast.is-error {
-  background: linear-gradient(rgba(84, 20, 16, 0.9), rgba(84, 20, 16, 0.9)) padding-box,
-    linear-gradient(rgba(255, 69, 58, 0.7), rgba(255, 69, 58, 0.35)) border-box;
+  color: var(--danger);
 }
 
 .copy-toast.is-error .copy-toast__icon svg {
@@ -1009,59 +1033,9 @@ html.js .reveal.is-visible {
     font-size: 1.05rem;
   }
 
+  /* Адрес/Телефон/Записаться в доке, Donate — в плавающей кнопке над доком */
   .hero-buttons {
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-    width: 100%;
-    margin-top: 24px;
-  }
-
-  /* Адрес и Телефон в доке; Записаться тоже — в хиро остаётся только Donate */
-  .quick-actions {
     display: none;
-  }
-
-  .hero-actions {
-    width: 100%;
-    align-items: center;
-  }
-
-  .hero-actions .support-dropdown {
-    width: 100%;
-  }
-
-  .hero-buttons .book-btn {
-    display: none;
-  }
-
-  .hero-rating {
-    align-items: center;
-  }
-
-  .book-btn {
-    width: 100%;
-    max-width: 460px;
-  }
-
-  .quick-actions {
-    width: 100%;
-    margin-top: 22px;
-  }
-
-  .cta-btn {
-    text-align: left;
-  }
-
-  /* донат-меню раскрывается ВВЕРХ, чтобы не уходить под fixed-док */
-  .support-menu {
-    top: auto;
-    bottom: calc(100% + 8px);
-    transform: translateY(6px) scale(0.98);
-  }
-
-  .support-dropdown.is-open .support-menu {
-    transform: translateY(0) scale(1);
   }
 
   .footer-inner {
@@ -1140,6 +1114,100 @@ html.js .reveal.is-visible {
   .appbar-book:active {
     background: #ffffff;
   }
+
+  /* круглая Donate-кнопка над доком */
+  .donate-fab {
+    display: block;
+    position: fixed;
+    right: 14px;
+    bottom: calc(90px + env(safe-area-inset-bottom));
+    z-index: var(--z-sticky);
+  }
+
+  .donate-fab__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    background: var(--fill-strong) padding-box, var(--edge) border-box;
+    -webkit-backdrop-filter: blur(32px) saturate(200%);
+    backdrop-filter: blur(32px) saturate(200%);
+    box-shadow: var(--shadow-pop), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    color: var(--ink);
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .donate-fab__btn svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .donate-fab__btn:active {
+    transform: scale(0.94);
+  }
+
+  /* меню платёжек выезжает слева от кнопки */
+  .donate-fab__menu {
+    position: absolute;
+    right: calc(100% + 10px);
+    top: 50%;
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    border: 1px solid transparent;
+    background: linear-gradient(150deg, #202024, #151518) padding-box, var(--edge) border-box;
+    border-radius: 18px;
+    box-shadow: var(--shadow-pop), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-50%) translateX(12px) scale(0.9);
+    transform-origin: right center;
+    transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out), visibility 0s linear 0.25s;
+  }
+
+  .donate-fab.is-open .donate-fab__menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0) scale(1);
+    transition-delay: 0s;
+  }
+
+  .donate-fab__menu .support-item {
+    flex: 0 0 62px;
+    min-height: 46px;
+    background-size: 44px auto;
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out), background-color 0.2s var(--ease-out);
+  }
+
+  .donate-fab__menu .usdt {
+    background-size: 40px auto;
+  }
+
+  .donate-fab__menu .revolut {
+    background-size: 54px auto;
+  }
+
+  .donate-fab.is-open .support-item {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .donate-fab.is-open .support-item:nth-child(1) {
+    transition-delay: 0.05s;
+  }
+
+  .donate-fab.is-open .support-item:nth-child(2) {
+    transition-delay: 0.1s;
+  }
+
+  .donate-fab.is-open .support-item:nth-child(3) {
+    transition-delay: 0.15s;
+  }
 }
 
 @media (max-width: 430px) {
@@ -1183,6 +1251,18 @@ html.js .reveal.is-visible {
   .about-copy p .w {
     opacity: 1 !important;
     transition: none;
+  }
+
+  html.js .about-note {
+    height: auto;
+    padding-block: clamp(40px, 6vw, 110px);
+  }
+
+  html.js .about-inner {
+    position: static;
+    min-height: 0;
+    border-top: 1px solid var(--hairline);
+    padding-top: clamp(36px, 5vw, 72px);
   }
 
   html.js .reveal {

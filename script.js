@@ -64,6 +64,9 @@ const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)
 const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
 
 let refreshScrollText = null;
+let updateAboutWords = null;
+
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
 
 function getCurrentLang() {
   return document.documentElement.lang || localStorage.getItem("ibarber-lang") || "en";
@@ -185,6 +188,7 @@ function setupLanguageToggle() {
 function setupScrollTextReveal() {
   const el = document.querySelector("[data-scroll-text]");
   if (!el || prefersReducedMotion) return;
+  const section = el.closest(".about-note");
 
   let spans = [];
 
@@ -192,36 +196,22 @@ function setupScrollTextReveal() {
     const words = el.textContent.trim().split(/\s+/);
     el.innerHTML = words.map((w) => `<span class="w">${w}</span>`).join(" ");
     spans = Array.from(el.querySelectorAll(".w"));
-    update();
+    if (updateAboutWords) updateAboutWords(window.scrollY);
   };
 
-  const update = () => {
-    if (!spans.length) return;
-    const rect = el.getBoundingClientRect();
-    const vh = window.innerHeight;
-    const start = vh * 0.9;
-    const end = vh * 0.45;
-    const progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
-    const raw = progress * spans.length;
+  // текст проявляется, пока секция запинена (sticky в CSS); вызывается из
+  // lerp-цикла setupParallax — тот же сглаженный скролл, что у остальных анимаций.
+  // К 82% пина все слова видимы — остаток пина как пауза перед продолжением
+  updateAboutWords = (smoothY) => {
+    if (!spans.length || !section) return;
+    const runway = Math.max(section.offsetHeight - window.innerHeight, 1);
+    const p = clamp01((smoothY - section.offsetTop) / (runway * 0.82));
+    const raw = p * spans.length;
     spans.forEach((span, index) => {
-      const t = Math.min(1, Math.max(0, raw - index));
+      const t = clamp01(raw - index);
       span.style.opacity = (0.14 + 0.86 * t).toFixed(3);
     });
   };
-
-  let ticking = false;
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        update();
-        ticking = false;
-      });
-    },
-    { passive: true }
-  );
 
   refreshScrollText = split;
   split();
@@ -271,59 +261,46 @@ function setupParallax() {
   let smoothY = window.scrollY;
   let rafId = null;
 
-  const clamp01 = (v) => Math.min(1, Math.max(0, v));
-
   const apply = () => {
-    const desktop = window.innerWidth > 820;
+    const vh = window.innerHeight;
+    // мобиле — те же анимации, амплитуда меньше под узкий экран
+    const amp = window.innerWidth > 820 ? 170 : 90;
 
     if (heroSection && heroCopy && heroPhoto) {
-      if (desktop) {
-        const limit = Math.max(heroSection.offsetHeight * 0.85, 1);
-        const p = clamp01(smoothY / limit);
-        const shift = (p * 170).toFixed(2);
-        const fade = (1 - p * 0.75).toFixed(3);
-        heroCopy.style.transform = `translate3d(-${shift}px, 0, 0)`;
-        heroCopy.style.opacity = fade;
-        heroPhoto.style.transform = `translate3d(${shift}px, ${(smoothY * -0.08).toFixed(2)}px, 0)`;
-        heroPhoto.style.opacity = fade;
-      } else {
-        heroCopy.style.transform = "";
-        heroCopy.style.opacity = "";
-        heroPhoto.style.transform = `translate3d(0, ${(smoothY * -0.08).toFixed(2)}px, 0)`;
-        heroPhoto.style.opacity = "";
-      }
+      const limit = Math.max(heroSection.offsetHeight * 0.85, 1);
+      const p = clamp01(smoothY / limit);
+      const shift = (p * amp).toFixed(2);
+      const fade = (1 - p * 0.75).toFixed(3);
+      heroCopy.style.transform = `translate3d(-${shift}px, 0, 0)`;
+      heroCopy.style.opacity = fade;
+      heroPhoto.style.transform = `translate3d(${shift}px, ${(smoothY * -0.08).toFixed(2)}px, 0)`;
+      heroPhoto.style.opacity = fade;
     }
 
-    // «Обо мне»: видео-круг растёт 0.8 → 1, пока долистываем до секции
+    // «Обо мне»: видео-круг растёт 0.6 → 1 на подходе, во время пина медленно всплывает
     if (aboutSection && aboutMedia) {
-      const vh = window.innerHeight;
       const top = aboutSection.offsetTop - smoothY;
-      const p = clamp01((vh - top) / (vh * 0.85));
-      aboutMedia.style.transform = `translate3d(0, ${((1 - p) * 70).toFixed(2)}px, 0) scale(${(0.6 + 0.4 * p).toFixed(4)})`;
+      const enterP = clamp01((vh - top) / (vh * 0.85));
+      const runway = Math.max(aboutSection.offsetHeight - vh, 1);
+      const pinP = clamp01((smoothY - aboutSection.offsetTop) / runway);
+      aboutMedia.style.transform = `translate3d(0, ${((1 - enterP) * 70 - pinP * 46).toFixed(2)}px, 0) scale(${(0.6 + 0.4 * enterP).toFixed(4)})`;
     }
+    if (updateAboutWords) updateAboutWords(smoothY);
 
     if (revSection && revLeft && revRight) {
-      if (desktop) {
-        const vh = window.innerHeight;
-        const top = revSection.offsetTop - smoothY;
-        const startEdge = vh * 1.0;
-        const endEdge = vh * 0.35;
-        // у конца страницы прогресс докручивается до 1, чтобы элементы соединились
-        const maxScroll = document.documentElement.scrollHeight - vh;
-        const endP = maxScroll > 0 ? clamp01(1 - (maxScroll - smoothY) / (vh * 0.35)) : 0;
-        const p = Math.max(clamp01((startEdge - top) / (startEdge - endEdge)), endP);
-        const shift = ((1 - p) * 170).toFixed(2);
-        const fade = (0.15 + 0.85 * p).toFixed(3);
-        revLeft.style.transform = `translate3d(-${shift}px, ${((1 - p) * 40).toFixed(2)}px, 0)`;
-        revLeft.style.opacity = fade;
-        revRight.style.transform = `translate3d(${shift}px, ${((1 - p) * 80).toFixed(2)}px, 0)`;
-        revRight.style.opacity = fade;
-      } else {
-        revLeft.style.transform = "";
-        revLeft.style.opacity = "";
-        revRight.style.transform = "";
-        revRight.style.opacity = "";
-      }
+      const top = revSection.offsetTop - smoothY;
+      const startEdge = vh * 1.0;
+      const endEdge = vh * 0.35;
+      // у конца страницы прогресс докручивается до 1, чтобы элементы соединились
+      const maxScroll = document.documentElement.scrollHeight - vh;
+      const endP = maxScroll > 0 ? clamp01(1 - (maxScroll - smoothY) / (vh * 0.35)) : 0;
+      const p = Math.max(clamp01((startEdge - top) / (startEdge - endEdge)), endP);
+      const shift = ((1 - p) * amp).toFixed(2);
+      const fade = (0.15 + 0.85 * p).toFixed(3);
+      revLeft.style.transform = `translate3d(-${shift}px, ${((1 - p) * 40).toFixed(2)}px, 0)`;
+      revLeft.style.opacity = fade;
+      revRight.style.transform = `translate3d(${shift}px, ${((1 - p) * 80).toFixed(2)}px, 0)`;
+      revRight.style.opacity = fade;
     }
   };
 
@@ -467,47 +444,44 @@ function setupReviewsCarousel() {
 }
 
 function setupSupportDropdown() {
-  const toggle = document.getElementById("supportToggle");
-  const menu = document.getElementById("supportMenu");
-  if (!toggle || !menu) return;
-  const dropdown = toggle.closest(".support-dropdown");
-  if (!dropdown) return;
   const showToast = setupCopyToast();
 
-  menu.hidden = false;
+  const heroMenu = document.getElementById("supportMenu");
+  if (heroMenu) heroMenu.hidden = false;
 
-  const close = () => {
-    toggle.setAttribute("aria-expanded", "false");
-    dropdown.classList.remove("is-open");
+  // два дропдауна с одной логикой: Donate в хиро (десктоп) и FAB над доком (мобиле)
+  const groups = [document.getElementById("supportToggle"), document.getElementById("donateFabToggle")]
+    .filter(Boolean)
+    .map((toggle) => ({ toggle, root: toggle.closest(".support-dropdown, .donate-fab") }))
+    .filter((group) => group.root);
+
+  const closeAll = () => {
+    groups.forEach(({ toggle, root }) => {
+      toggle.setAttribute("aria-expanded", "false");
+      root.classList.remove("is-open");
+    });
   };
 
-  const open = () => {
-    toggle.setAttribute("aria-expanded", "true");
-    dropdown.classList.add("is-open");
-  };
-
-  toggle.addEventListener("click", () => {
-    const isOpen = toggle.getAttribute("aria-expanded") === "true";
-    if (isOpen) {
-      close();
-      return;
-    }
-    open();
+  groups.forEach(({ toggle, root }) => {
+    toggle.addEventListener("click", () => {
+      const wasOpen = root.classList.contains("is-open");
+      closeAll();
+      if (!wasOpen) {
+        toggle.setAttribute("aria-expanded", "true");
+        root.classList.add("is-open");
+      }
+    });
   });
 
   document.addEventListener("click", (event) => {
-    if (dropdown.classList.contains("is-open") && !event.target.closest(".support-dropdown")) {
-      close();
-    }
+    if (!event.target.closest(".support-dropdown, .donate-fab")) closeAll();
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && dropdown.classList.contains("is-open")) {
-      close();
-    }
+    if (event.key === "Escape") closeAll();
   });
 
-  menu.querySelectorAll(".support-item").forEach((item) => {
+  document.querySelectorAll(".support-item").forEach((item) => {
     item.addEventListener("click", async (event) => {
       event.preventDefault();
       const walletValue = item.dataset.wallet || "";
