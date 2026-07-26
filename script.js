@@ -17,8 +17,8 @@ const translations = {
     rating_caption: "5.0 on Google & Booksy",
     about_title: "About Me",
     about_text: "More than 8 years of experience in men's haircuts and beard grooming. I work in central Warsaw. I guarantee high-quality results. My clients include IT professionals, premium clients, and public figures.",
-    wallet_copied: "Copied: {value}",
-    wallet_copy_failed: "Unable to copy. Please copy manually: {value}",
+    wallet_copied: "Copied",
+    wallet_copy_failed: "Unable to copy — copy manually",
   },
   ru: {
     hero_title: "Барбер Катя",
@@ -36,8 +36,8 @@ const translations = {
     rating_caption: "5.0 на Google и Booksy",
     about_title: "Обо мне",
     about_text: "Более 8 лет опыта в мужских стрижках и уходе за бородой. Работаю в центре Варшавы. Гарантирую высокое качество результата. Среди моих клиентов — IT-специалисты, премиальные клиенты и публичные личности.",
-    wallet_copied: "Скопировано: {value}",
-    wallet_copy_failed: "Не удалось скопировать. Скопируйте вручную: {value}",
+    wallet_copied: "Скопировано",
+    wallet_copy_failed: "Не удалось скопировать — скопируйте вручную",
   },
   pl: {
     hero_title: "Barberka Katia",
@@ -55,8 +55,8 @@ const translations = {
     rating_caption: "5.0 w Google i Booksy",
     about_title: "O mnie",
     about_text: "Ponad 8 lat doświadczenia w strzyżeniu męskim i pielęgnacji brody. Pracuję w centrum Warszawy. Gwarantuję najwyższą jakość usług. Wśród moich klientów są specjaliści IT, klienci premium i osoby publiczne.",
-    wallet_copied: "Skopiowano: {value}",
-    wallet_copy_failed: "Nie udało się skopiować. Skopiuj ręcznie: {value}",
+    wallet_copied: "Skopiowano",
+    wallet_copy_failed: "Nie udało się skopiować — skopiuj ręcznie",
   }
 };
 
@@ -92,22 +92,25 @@ function setupCopyToast() {
   toast.setAttribute("role", "status");
   toast.setAttribute("aria-live", "polite");
   toast.innerHTML = `
-    <span class="copy-toast__icon" aria-hidden="true">
-      <svg viewBox="0 0 32 32" focusable="false">
-        <rect x="13" y="9" width="14" height="18"></rect>
-        <polyline points="11,23 5,23 5,5 19,5 19,7"></polyline>
-      </svg>
+    <span class="copy-toast__label">
+      <span class="copy-toast__icon" aria-hidden="true">
+        <svg viewBox="0 0 32 32" focusable="false">
+          <rect x="13" y="9" width="14" height="18"></rect>
+          <polyline points="11,23 5,23 5,5 19,5 19,7"></polyline>
+        </svg>
+      </span>
+      <span class="copy-toast__label-text"></span>
     </span>
-    <span class="copy-toast__text"></span>
+    <span class="copy-toast__value"></span>
   `;
   document.body.appendChild(toast);
-  const textNode = toast.querySelector(".copy-toast__text");
+  const labelNode = toast.querySelector(".copy-toast__label-text");
+  const valueNode = toast.querySelector(".copy-toast__value");
 
   let hideTimer = null;
-  return (message, isError = false) => {
-    if (textNode) {
-      textNode.textContent = message;
-    }
+  return (label, value = "", isError = false) => {
+    if (labelNode) labelNode.textContent = label;
+    if (valueNode) valueNode.textContent = value;
     toast.classList.toggle("is-error", isError);
     toast.classList.add("is-visible");
     if (hideTimer) clearTimeout(hideTimer);
@@ -191,11 +194,13 @@ function setupScrollTextReveal() {
   const section = el.closest(".about-note");
 
   let spans = [];
+  let prevOps = [];
 
   const split = () => {
     const words = el.textContent.trim().split(/\s+/);
     el.innerHTML = words.map((w) => `<span class="w">${w}</span>`).join(" ");
     spans = Array.from(el.querySelectorAll(".w"));
+    prevOps = new Array(spans.length).fill("");
     if (updateAboutWords) updateAboutWords(window.scrollY);
   };
 
@@ -207,9 +212,14 @@ function setupScrollTextReveal() {
     const runway = Math.max(section.offsetHeight - window.innerHeight, 1);
     const p = clamp01((smoothY - section.offsetTop) / (runway * 0.82));
     const raw = p * spans.length;
+    // писать стиль только при изменении: 40 записей/кадр дёргали скролл на iOS
     spans.forEach((span, index) => {
       const t = clamp01(raw - index);
-      span.style.opacity = (0.14 + 0.86 * t).toFixed(3);
+      const o = (0.14 + 0.86 * t).toFixed(2);
+      if (prevOps[index] !== o) {
+        prevOps[index] = o;
+        span.style.opacity = o;
+      }
     });
   };
 
@@ -267,7 +277,9 @@ function setupParallax() {
     const amp = window.innerWidth > 820 ? 170 : 90;
 
     if (heroSection && heroCopy && heroPhoto) {
-      const limit = Math.max(heroSection.offsetHeight * 0.85, 1);
+      // моб. пин (CSS даёт секции 190svh): разъезд растянут на весь пин
+      const heroRunway = heroSection.offsetHeight - vh;
+      const limit = heroRunway > 80 ? heroRunway : Math.max(heroSection.offsetHeight * 0.85, 1);
       const p = clamp01(smoothY / limit);
       const shift = (p * amp).toFixed(2);
       const fade = (1 - p * 0.75).toFixed(3);
@@ -288,13 +300,20 @@ function setupParallax() {
     if (updateAboutWords) updateAboutWords(smoothY);
 
     if (revSection && revLeft && revRight) {
-      const top = revSection.offsetTop - smoothY;
-      const startEdge = vh * 1.0;
-      const endEdge = vh * 0.35;
-      // у конца страницы прогресс докручивается до 1, чтобы элементы соединились
-      const maxScroll = document.documentElement.scrollHeight - vh;
-      const endP = maxScroll > 0 ? clamp01(1 - (maxScroll - smoothY) / (vh * 0.35)) : 0;
-      const p = Math.max(clamp01((startEdge - top) / (startEdge - endEdge)), endP);
+      const revRunway = revSection.offsetHeight - vh;
+      let p;
+      if (revRunway > 80) {
+        // моб. пин: секция стоит, скролл съезжает элементы на место
+        p = clamp01((smoothY - revSection.offsetTop) / (revRunway * 0.9));
+      } else {
+        const top = revSection.offsetTop - smoothY;
+        const startEdge = vh * 1.0;
+        const endEdge = vh * 0.35;
+        // у конца страницы прогресс докручивается до 1, чтобы элементы соединились
+        const maxScroll = document.documentElement.scrollHeight - vh;
+        const endP = maxScroll > 0 ? clamp01(1 - (maxScroll - smoothY) / (vh * 0.35)) : 0;
+        p = Math.max(clamp01((startEdge - top) / (startEdge - endEdge)), endP);
+      }
       const shift = ((1 - p) * amp).toFixed(2);
       const fade = (0.15 + 0.85 * p).toFixed(3);
       revLeft.style.transform = `translate3d(-${shift}px, ${((1 - p) * 40).toFixed(2)}px, 0)`;
@@ -357,7 +376,8 @@ function setupReviewsCarousel() {
     source.setAttribute("role", "img");
     source.setAttribute("aria-label", label);
     const icon = /google/i.test(label) ? "i-google" : "i-booksy";
-    source.innerHTML = `<svg class="src-logo" viewBox="0 0 24 24" aria-hidden="true"><use href="/sprite.svg#${icon}"></use></svg>`;
+    const mod = icon === "i-booksy" ? " src-logo--booksy" : "";
+    source.innerHTML = `<svg class="src-logo${mod}" viewBox="0 0 24 24" aria-hidden="true"><use href="/sprite.svg?v=3#${icon}"></use></svg>`;
     const row = document.createElement("div");
     row.className = "reviews-src-row";
     row.append(source);
@@ -488,9 +508,9 @@ function setupSupportDropdown() {
       const copied = await copyToClipboard(walletValue);
 
       if (copied) {
-        showToast(t("wallet_copied", { value: walletValue }));
+        showToast(t("wallet_copied"), walletValue);
       } else {
-        showToast(t("wallet_copy_failed", { value: walletValue }), true);
+        showToast(t("wallet_copy_failed"), walletValue, true);
       }
     });
   });

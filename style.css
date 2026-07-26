@@ -609,10 +609,11 @@ html.js .about-inner {
   text-wrap: pretty;
 }
 
-/* word-by-word scroll reveal (JS sets per-word opacity) */
+/* word-by-word scroll reveal (JS sets per-word opacity);
+   БЕЗ transition: 40 постоянных анимаций текста дёргали скролл на iOS,
+   плавность даёт lerp в setupParallax */
 .about-copy p .w {
   opacity: 0.14;
-  transition: opacity 0.3s linear;
 }
 
 /* video circle */
@@ -719,6 +720,11 @@ html.js .about-inner {
 .src-logo {
   width: 18px;
   height: 18px;
+}
+
+/* фирменная «b» Booksy шире квадрата — box 26×18: высота знака = высоте G */
+.src-logo--booksy {
+  width: 26px;
 }
 
 .reviews-section__card-text {
@@ -879,25 +885,45 @@ html.js .about-inner {
   left: 50%;
   transform: translate(-50%, -50%) scale(0.86);
   z-index: var(--z-toast);
-  max-width: min(92vw, 440px);
+  /* left:50% режет shrink-to-fit до полуэкрана — ширину задаёт контент */
+  width: max-content;
+  max-width: min(94vw, 480px);
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 16px 22px;
-  border-radius: 18px;
+  gap: 7px;
+  padding: 18px 20px;
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.97);
   color: #0a0a0c;
   box-shadow: inset 0 1px 0 #fff, 0 32px 70px -18px rgba(0, 0, 0, 0.8);
-  font-size: 0.95rem;
-  font-weight: 600;
-  line-height: 1.4;
-  overflow-wrap: break-word;
-  word-break: break-word;
+  text-align: center;
+  line-height: 1.35;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   /* apple-пружина на появление, мягкий fade на скрытие */
   transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out), visibility 0s linear 0.25s;
+}
+
+/* «Скопировано» — тонкая строка с иконкой */
+.copy-toast__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: rgba(10, 10, 12, 0.62);
+}
+
+/* адрес — своя строка, крупнее и жирнее */
+.copy-toast__value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
 }
 
 .copy-toast__icon {
@@ -906,10 +932,10 @@ html.js .about-inner {
 }
 
 .copy-toast__icon svg {
-  width: 17px;
-  height: 17px;
+  width: 14px;
+  height: 14px;
   fill: none;
-  stroke: #0a0a0c;
+  stroke: rgba(10, 10, 12, 0.62);
   stroke-width: 2.4;
   stroke-miterlimit: 10;
 }
@@ -921,7 +947,7 @@ html.js .about-inner {
   transition: opacity 0.2s var(--ease-out), transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0s;
 }
 
-.copy-toast.is-error {
+.copy-toast.is-error .copy-toast__label {
   color: var(--danger);
 }
 
@@ -947,6 +973,12 @@ html.js .about-inner {
     padding-bottom: 98px;
   }
 
+  /* плёнка-зерно: fixed-слой с mix-blend-mode заставляет iOS пересчитывать
+     блендинг всей страницы каждый кадр скролла — на мобиле отключаем */
+  body::after {
+    display: none;
+  }
+
   .hero-intro {
     padding-block: 28px 36px;
     min-height: calc(100svh - 60px);
@@ -956,6 +988,34 @@ html.js .about-inner {
 
   .hero-intro > .hero-grid {
     width: 100%;
+  }
+
+  /* скролл-пин хиро: скролл сперва проигрывает разъезд, потом едет сайт */
+  html.js .hero-intro {
+    height: 190svh;
+    min-height: 0;
+    padding-block: 0;
+    display: block;
+  }
+
+  html.js .hero-intro > .hero-grid {
+    position: sticky;
+    top: 60px;
+    min-height: calc(100svh - 60px);
+    align-content: center;
+  }
+
+  /* скролл-пин отзывов: секция встаёт, элементы съезжаются, потом дальше */
+  html.js .reviews-panel {
+    height: 190svh;
+    padding-block: 0;
+  }
+
+  html.js .reviews-flex {
+    position: sticky;
+    top: 60px;
+    min-height: calc(100svh - 60px);
+    align-content: center;
   }
 
   .about-inner {
@@ -1154,6 +1214,9 @@ html.js .about-inner {
     position: absolute;
     right: calc(100% + 10px);
     top: 50%;
+    /* явная ширина: iOS Safari считает shrink-to-fit abs-бокса от узкого
+       родителя (56px) и валит плитки друг на друга */
+    width: max-content;
     display: flex;
     gap: 8px;
     padding: 8px;
@@ -1176,7 +1239,8 @@ html.js .about-inner {
   }
 
   .donate-fab__menu .support-item {
-    flex: 0 0 62px;
+    flex: 0 0 auto;
+    width: 62px;
     min-height: 46px;
     background-size: 44px auto;
     opacity: 0;
@@ -1279,5 +1343,26 @@ html.js .about-inner {
   .cta-btn,
   .support-item {
     transition: none;
+  }
+}
+
+/* reduced-motion на мобиле: распинить хиро и отзывы */
+@media (max-width: 820px) and (prefers-reduced-motion: reduce) {
+  html.js .hero-intro {
+    height: auto;
+    min-height: calc(100svh - 60px);
+    padding-block: 28px 36px;
+    display: flex;
+  }
+
+  html.js .reviews-panel {
+    height: auto;
+    padding-block: clamp(32px, 5vw, 80px);
+  }
+
+  html.js .hero-intro > .hero-grid,
+  html.js .reviews-flex {
+    position: static;
+    min-height: 0;
   }
 }
