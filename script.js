@@ -273,19 +273,22 @@ function setupParallax() {
 
   const apply = () => {
     const vh = window.innerHeight;
-    // мобиле — те же анимации, амплитуда меньше под узкий экран
-    const amp = window.innerWidth > 820 ? 170 : 90;
+    const mobile = window.innerWidth <= 820;
 
     if (heroSection && heroCopy && heroPhoto) {
-      // моб. пин (CSS даёт секции 190svh): разъезд растянут на весь пин
-      const heroRunway = heroSection.offsetHeight - vh;
-      const limit = heroRunway > 80 ? heroRunway : Math.max(heroSection.offsetHeight * 0.85, 1);
+      const limit = Math.max(heroSection.offsetHeight * 0.85, 1);
       const p = clamp01(smoothY / limit);
-      const shift = (p * amp).toFixed(2);
       const fade = (1 - p * 0.75).toFixed(3);
-      heroCopy.style.transform = `translate3d(-${shift}px, 0, 0)`;
+      if (mobile) {
+        // мобиле: улетают ВВЕРХ (и возвращаются сверху), фото быстрее — параллакс
+        heroCopy.style.transform = `translate3d(0, ${(-p * 80).toFixed(2)}px, 0)`;
+        heroPhoto.style.transform = `translate3d(0, ${(-p * 140).toFixed(2)}px, 0)`;
+      } else {
+        const shift = (p * 170).toFixed(2);
+        heroCopy.style.transform = `translate3d(-${shift}px, 0, 0)`;
+        heroPhoto.style.transform = `translate3d(${shift}px, ${(smoothY * -0.08).toFixed(2)}px, 0)`;
+      }
       heroCopy.style.opacity = fade;
-      heroPhoto.style.transform = `translate3d(${shift}px, ${(smoothY * -0.08).toFixed(2)}px, 0)`;
       heroPhoto.style.opacity = fade;
     }
 
@@ -300,25 +303,24 @@ function setupParallax() {
     if (updateAboutWords) updateAboutWords(smoothY);
 
     if (revSection && revLeft && revRight) {
-      const revRunway = revSection.offsetHeight - vh;
-      let p;
-      if (revRunway > 80) {
-        // моб. пин: секция стоит, скролл съезжает элементы на место
-        p = clamp01((smoothY - revSection.offsetTop) / (revRunway * 0.9));
-      } else {
-        const top = revSection.offsetTop - smoothY;
-        const startEdge = vh * 1.0;
-        const endEdge = vh * 0.35;
-        // у конца страницы прогресс докручивается до 1, чтобы элементы соединились
-        const maxScroll = document.documentElement.scrollHeight - vh;
-        const endP = maxScroll > 0 ? clamp01(1 - (maxScroll - smoothY) / (vh * 0.35)) : 0;
-        p = Math.max(clamp01((startEdge - top) / (startEdge - endEdge)), endP);
-      }
-      const shift = ((1 - p) * amp).toFixed(2);
+      const top = revSection.offsetTop - smoothY;
+      const startEdge = vh * 1.0;
+      const endEdge = vh * 0.35;
+      // у конца страницы прогресс докручивается до 1, чтобы элементы соединились
+      const maxScroll = document.documentElement.scrollHeight - vh;
+      const endP = maxScroll > 0 ? clamp01(1 - (maxScroll - smoothY) / (vh * 0.35)) : 0;
+      const p = Math.max(clamp01((startEdge - top) / (startEdge - endEdge)), endP);
       const fade = (0.15 + 0.85 * p).toFixed(3);
-      revLeft.style.transform = `translate3d(-${shift}px, ${((1 - p) * 40).toFixed(2)}px, 0)`;
+      if (mobile) {
+        // мобиле: наоборот — приходят СНИЗУ, вторая половина едет быстрее
+        revLeft.style.transform = `translate3d(0, ${((1 - p) * 70).toFixed(2)}px, 0)`;
+        revRight.style.transform = `translate3d(0, ${((1 - p) * 120).toFixed(2)}px, 0)`;
+      } else {
+        const shift = ((1 - p) * 170).toFixed(2);
+        revLeft.style.transform = `translate3d(-${shift}px, ${((1 - p) * 40).toFixed(2)}px, 0)`;
+        revRight.style.transform = `translate3d(${shift}px, ${((1 - p) * 80).toFixed(2)}px, 0)`;
+      }
       revLeft.style.opacity = fade;
-      revRight.style.transform = `translate3d(${shift}px, ${((1 - p) * 80).toFixed(2)}px, 0)`;
       revRight.style.opacity = fade;
     }
   };

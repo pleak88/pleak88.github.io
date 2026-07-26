@@ -990,34 +990,6 @@ html.js .about-inner {
     width: 100%;
   }
 
-  /* скролл-пин хиро: скролл сперва проигрывает разъезд, потом едет сайт */
-  html.js .hero-intro {
-    height: 190svh;
-    min-height: 0;
-    padding-block: 0;
-    display: block;
-  }
-
-  html.js .hero-intro > .hero-grid {
-    position: sticky;
-    top: 60px;
-    min-height: calc(100svh - 60px);
-    align-content: center;
-  }
-
-  /* скролл-пин отзывов: секция встаёт, элементы съезжаются, потом дальше */
-  html.js .reviews-panel {
-    height: 190svh;
-    padding-block: 0;
-  }
-
-  html.js .reviews-flex {
-    position: sticky;
-    top: 60px;
-    min-height: calc(100svh - 60px);
-    align-content: center;
-  }
-
   .about-inner {
     grid-template-columns: minmax(0, 1fr);
     gap: 26px;
@@ -1346,23 +1318,3 @@ html.js .about-inner {
   }
 }
 
-/* reduced-motion на мобиле: распинить хиро и отзывы */
-@media (max-width: 820px) and (prefers-reduced-motion: reduce) {
-  html.js .hero-intro {
-    height: auto;
-    min-height: calc(100svh - 60px);
-    padding-block: 28px 36px;
-    display: flex;
-  }
-
-  html.js .reviews-panel {
-    height: auto;
-    padding-block: clamp(32px, 5vw, 80px);
-  }
-
-  html.js .hero-intro > .hero-grid,
-  html.js .reviews-flex {
-    position: static;
-    min-height: 0;
-  }
-}
