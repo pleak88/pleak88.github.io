@@ -466,6 +466,79 @@ function setupReviewsCarousel() {
   startAutoplay();
 }
 
+// бегущее свечение по кромке btn-glass (стиль getlayers.ai):
+// блобы движутся по периметру скруглённого прямоугольника, маска
+// показывает их только в 1.5px-кольце
+function setupBorderGlow() {
+  const glows = Array.from(document.querySelectorAll(".btn-glass .border-glow"));
+  if (!glows.length || prefersReducedMotion) return;
+
+  const radii = new Map();
+  const readRadius = (glow) => {
+    const r = parseFloat(getComputedStyle(glow).borderTopLeftRadius) || 0;
+    radii.set(glow, r);
+    return r;
+  };
+  window.addEventListener("resize", () => radii.clear(), { passive: true });
+
+  // точка на периметре скруглённого прямоугольника, d — путь по часовой от (r,0)
+  const pointAt = (d, w, h, r) => {
+    const sw = w - 2 * r;
+    const sh = h - 2 * r;
+    const arc = (Math.PI * r) / 2;
+    let seg = d;
+    if (seg < sw) return { x: r + seg, y: 0 };
+    seg -= sw;
+    if (seg < arc) {
+      const a = -Math.PI / 2 + seg / r;
+      return { x: w - r + r * Math.cos(a), y: r + r * Math.sin(a) };
+    }
+    seg -= arc;
+    if (seg < sh) return { x: w, y: r + seg };
+    seg -= sh;
+    if (seg < arc) {
+      const a = seg / r;
+      return { x: w - r + r * Math.cos(a), y: h - r + r * Math.sin(a) };
+    }
+    seg -= arc;
+    if (seg < sw) return { x: w - r - seg, y: h };
+    seg -= sw;
+    if (seg < arc) {
+      const a = Math.PI / 2 + seg / r;
+      return { x: r + r * Math.cos(a), y: h - r + r * Math.sin(a) };
+    }
+    seg -= arc;
+    if (seg < sh) return { x: 0, y: h - r - seg };
+    seg -= sh;
+    const a = Math.PI + seg / r;
+    return { x: r + r * Math.cos(a), y: r + r * Math.sin(a) };
+  };
+
+  const speed = 90; // px/с вдоль кромки
+  let dist = 0;
+  let last = performance.now();
+
+  const frame = (now) => {
+    dist += ((now - last) / 1000) * speed;
+    last = now;
+    glows.forEach((glow) => {
+      const w = glow.offsetWidth;
+      const h = glow.offsetHeight;
+      if (!w || !h) return;
+      const r = Math.min(radii.has(glow) ? radii.get(glow) : readRadius(glow), w / 2, h / 2);
+      const per = 2 * (w - 2 * r) + 2 * (h - 2 * r) + 2 * Math.PI * r;
+      const blobs = glow.children;
+      for (let i = 0; i < blobs.length; i++) {
+        const d = (dist + (per * i) / blobs.length) % per;
+        const pt = pointAt(d, w, h, r);
+        blobs[i].style.transform = `translate(-50%, -50%) translate(${pt.x.toFixed(1)}px, ${pt.y.toFixed(1)}px)`;
+      }
+    });
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+}
+
 function setupSupportDropdown() {
   const showToast = setupCopyToast();
 
@@ -583,6 +656,7 @@ function init() {
   setupParallax();
   setupReviewsCarousel();
   setupSupportDropdown();
+  setupBorderGlow();
 }
 
 document.addEventListener("DOMContentLoaded", init);

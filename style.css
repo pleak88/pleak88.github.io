@@ -1316,5 +1316,77 @@ html.js .about-inner {
   .support-item {
     transition: none;
   }
+
+  .border-glow {
+    display: none;
+  }
+}
+
+/* ============ Liquid Glass CTA (эксперимент по getlayers.ai) ============ */
+/* аддитивно: убрать класс btn-glass в HTML — вернётся белая пилюля */
+.btn-glass {
+  position: relative;
+  isolation: isolate;
+  background: rgba(255, 255, 255, 0.055);
+  color: var(--ink);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -14px 24px -16px rgba(255, 255, 255, 0.16);
+  transition: background 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out), transform 0.2s var(--ease-out);
+}
+
+.btn-glass:hover,
+.btn-glass:active {
+  background: rgba(255, 255, 255, 0.125);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -21px 46px -16px rgba(255, 255, 255, 0.16);
+  transform: none;
+}
+
+.btn-glass:active {
+  transform: scale(0.98);
+}
+
+/* тонкая специальная кромка: градиент виден только в 1px-кольце (XOR-маска) */
+.btn-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.06) 38%, transparent 60%, rgba(255, 255, 255, 0.34));
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  -webkit-mask-clip: content-box, border-box;
+  -webkit-mask-composite: xor;
+  mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  mask-clip: content-box, border-box;
+  mask-composite: exclude;
+}
+
+/* бегущее свечение: блобы видны только в кольце 1.5px по периметру */
+.border-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  -webkit-mask-clip: content-box, border-box;
+  -webkit-mask-composite: xor;
+  mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  mask-clip: content-box, border-box;
+  mask-composite: exclude;
+}
+
+.border-glow-blob {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 216px;
+  height: 216px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, #ffffff 5%, rgba(232, 234, 239, 0.7) 16%, rgba(232, 234, 239, 0.22) 34%, transparent 58%);
+  will-change: transform;
 }
 
