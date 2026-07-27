@@ -1204,14 +1204,14 @@ html.js .about-inner {
     right: 14px;
     bottom: calc(90px + env(safe-area-inset-bottom));
     z-index: var(--z-sticky);
-    transform: translateY(78px);
+    transform: translateY(78px) scale(0.4);
     opacity: 0;
     pointer-events: none;
     transition: transform 0.55s var(--ease-out), opacity 0.35s var(--ease-out);
   }
 
   .donate-fab.is-shown {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     opacity: 1;
     pointer-events: auto;
   }
