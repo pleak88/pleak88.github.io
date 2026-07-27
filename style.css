@@ -1076,7 +1076,7 @@ html.js .about-inner {
   .portrait-arch,
   .about-media,
   .reviews-media {
-    width: min(300px, 74vw);
+    width: min(270px, 74vw);
   }
 
   .photo-rating {
