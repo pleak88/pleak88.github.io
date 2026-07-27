@@ -1021,9 +1021,10 @@ html.js .about-inner {
 
   /* отзывы наезжают на запиненное «Обо мне»; наезд -100svh = ровно к моменту
      полного перекрытия экрана заканчивается и пин — about не двигается вообще.
-     320svh: первая половина пина — чтение текста, вторая — наезд карточки */
+     360svh: текст дочитан к ~45% пина, наезд начинается лишь на ~62% —
+     запас, чтобы при быстром скролле карточка не накрывала недочитанный текст */
   html.js .about-note {
-    height: 320svh;
+    height: 360svh;
   }
 
   html.js .reviews-panel {
@@ -1076,7 +1077,7 @@ html.js .about-inner {
   .portrait-arch,
   .about-media,
   .reviews-media {
-    width: min(270px, 74vw);
+    width: min(250px, 74vw);
   }
 
   .photo-rating {
@@ -1195,13 +1196,19 @@ html.js .about-inner {
     background: #ffffff;
   }
 
-  /* круглая Donate-кнопка над доком */
+  /* круглая Donate-кнопка над доком; спрятана под доком, выезжает при скролле */
   .donate-fab {
     display: block;
     position: fixed;
     right: 14px;
     bottom: calc(90px + env(safe-area-inset-bottom));
     z-index: var(--z-sticky);
+    transform: translateY(160px);
+    transition: transform 0.55s var(--ease-out);
+  }
+
+  .donate-fab.is-shown {
+    transform: translateY(0);
   }
 
   .donate-fab__btn {

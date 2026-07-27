@@ -213,9 +213,9 @@ function setupScrollTextReveal() {
   updateAboutWords = (smoothY) => {
     if (!spans.length || !section) return;
     const runway = Math.max(section.offsetHeight - window.innerHeight, 1);
-    // на мобиле текст дочитывается к половине пина — карточка отзывов
-    // начинает наезжать только после этого
-    const k = window.innerWidth <= 820 ? 0.5 : 0.82;
+    // на мобиле текст дочитывается сильно раньше наезда карточки отзывов —
+    // запас на быстрый скролл (наезд начинается на ~62% пина, текст готов к ~45%)
+    const k = window.innerWidth <= 820 ? 0.45 : 0.82;
     const p = clamp01((smoothY - section.offsetTop) / (runway * k));
     const raw = p * spans.length;
     // писать стиль только при изменении: 40 записей/кадр дёргали скролл на iOS
@@ -582,6 +582,18 @@ function setupSupportDropdown() {
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeAll();
   });
+
+  // FAB спрятан под доком, выезжает когда юзер начинает листать вниз
+  const fab = document.getElementById("donateFab");
+  if (fab) {
+    const updateFab = () => {
+      const show = window.scrollY > 60;
+      if (!show && fab.classList.contains("is-shown")) closeAll();
+      fab.classList.toggle("is-shown", show);
+    };
+    window.addEventListener("scroll", updateFab, { passive: true });
+    updateFab();
+  }
 
   document.querySelectorAll(".support-item").forEach((item) => {
     item.addEventListener("click", async (event) => {
