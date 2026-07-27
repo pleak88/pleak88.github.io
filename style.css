@@ -1076,19 +1076,19 @@ html.js .about-inner {
   .portrait-arch,
   .about-media,
   .reviews-media {
-    width: min(200px, 74vw);
+    width: min(300px, 74vw);
   }
 
   .photo-rating {
     gap: 3px;
     padding: 26px 14px 7%;
-    font-size: 0.66rem;
+    font-size: 0.78rem;
     white-space: nowrap;
   }
 
   .photo-rating .hero-rating__stars svg {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
   }
 
   .hero-copy {
