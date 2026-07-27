@@ -995,7 +995,7 @@ html.js .about-inner {
   }
 
   .hero-intro {
-    padding-block: 28px 36px;
+    padding-block: 16px 36px;
     min-height: calc(100svh - 60px);
     display: flex;
     align-items: center;
@@ -1196,19 +1196,24 @@ html.js .about-inner {
     background: #ffffff;
   }
 
-  /* круглая Donate-кнопка над доком; спрятана под доком, выезжает при скролле */
+  /* круглая Donate-кнопка: спрятана ЗА доком (сдвиг ровно до его уровня),
+     при первом скролле выезжает из-под appbar и больше не исчезает */
   .donate-fab {
     display: block;
     position: fixed;
     right: 14px;
     bottom: calc(90px + env(safe-area-inset-bottom));
     z-index: var(--z-sticky);
-    transform: translateY(160px);
-    transition: transform 0.55s var(--ease-out);
+    transform: translateY(78px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.55s var(--ease-out), opacity 0.35s var(--ease-out);
   }
 
   .donate-fab.is-shown {
     transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .donate-fab__btn {

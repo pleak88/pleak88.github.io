@@ -583,13 +583,14 @@ function setupSupportDropdown() {
     if (event.key === "Escape") closeAll();
   });
 
-  // FAB спрятан под доком, выезжает когда юзер начинает листать вниз
+  // FAB спрятан за доком; при первом скролле выезжает и больше не прячется
   const fab = document.getElementById("donateFab");
   if (fab) {
     const updateFab = () => {
-      const show = window.scrollY > 60;
-      if (!show && fab.classList.contains("is-shown")) closeAll();
-      fab.classList.toggle("is-shown", show);
+      if (window.scrollY > 60) {
+        fab.classList.add("is-shown");
+        window.removeEventListener("scroll", updateFab);
+      }
     };
     window.addEventListener("scroll", updateFab, { passive: true });
     updateFab();
